@@ -1,0 +1,14 @@
+#define playvoice 0x01;
+#define setvoicelevel 0x05;
+#define startidentifyvoice 0x10;
+#define stopidentifyvoice 0x11;
+#define threetooneidentify 0x15;
+#define setvoiceidentyparam 0x1E;
+#define setwordsupdate 0x1F;
+#define startvoiceawake 0x51;
+#define stopvoiceawake 0x52;
+#define setuserdefinedaeaakename 0x53;
+#define inquirystate 0x21;
+
+
+

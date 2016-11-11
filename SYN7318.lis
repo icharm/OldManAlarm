@@ -1,0 +1,1101 @@
+                        .module SYN7318.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile SYN7318.c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile SYN7318.c
+ 0000           _words::
+ 0000                   .blkb 69
+                        .area idata
+ 0000 BEC8C3FC20317CBEC8C3FCB0A120317C  .byte 190,200,195,252,32,49,124,190,200,195,252,176,161,32,49,124
+ 0010 B0A5DFCF20327CCFD6D4DAB6E0C9D9B6  .byte 176,165,223,207,32,50,124,207,214,212,218,182,224,201,217,182
+ 0020 C8203130307CCFD6D4DACEC2B6C8B6E0  .byte 200,32,49,48,48,124,207,214,212,218,206,194,182,200,182,224
+ 0030 C9D9203130307CCFD6D4DABCB8B5E320  .byte 201,217,32,49,48,48,124,207,214,212,218,188,184,181,227,32
+ 0040 3130317C00        .byte 49,48,49,124,0
+                        .area data(ram, con, rel)
+ 0045                   .dbfile SYN7318.c
+ 0045                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0045                   .dbsym e words _words A[69:69]c
+ 0045           _wordID::
+ 0045                   .blkb 2
+                        .area idata
+ 0045 0000              .word 0
+                        .area data(ram, con, rel)
+ 0047                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0047                   .dbsym e wordID _wordID i
+                        .area text(rom, con, rel)
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0000                   .dbfunc e SYN7318_init _SYN7318_init fV
+                        .even
+ 0000           _SYN7318_init::
+ 0000                   .dbline -1
+ 0000                   .dbline 26
+ 0000           ; #include <string.h>
+ 0000           ; #include <stdio.h>
+ 0000           ; #include <iom128v.h>
+ 0000           ; #include "USART.h"
+ 0000           ; #include "basic.h"
+ 0000           ; #include "SYN7318.h"
+ 0000           ; #include "LCD.h"
+ 0000           ; 
+ 0000           ; 
+ 0000           ; //带命令识别词条
+ 0000           ; const uchar words[] = "救命 1|救命啊 1|哎呦 2|现在多少度 100|现在温度多少 100|现在几点 101|";
+ 0000           ; uchar tmp_text[255];
+ 0000           ; 
+ 0000           ; uint wordID = 0x0000;
+ 0000           ; 
+ 0000           ; //发送帧，0帧头，1数据区长度高字节，2数据区长度低字节，3命令字，4编码格式
+ 0000           ; extern uchar TxCharBuf[128];
+ 0000           ; extern uchar TxStrLen;
+ 0000           ; extern uchar RxCharBuf[16];
+ 0000           ; extern uchar RxBufWr, RxBufRd;
+ 0000           ; 
+ 0000           ; /*******************************************************************************
+ 0000           ; * SYN语音识别模块_初始化
+ 0000           ; ********************************************************************************/
+ 0000           ; void SYN7318_init(void)
+ 0000           ; {
+ 0000                   .dbline 28
+ 0000           ;     //PC6,7 定义输入 10ms低电平 延时100ms
+ 0000           ;     SRT_SYN_OUT;
+ 0000 A69A              sbi 0x14,6
+ 0002                   .dbline 29
+ 0002           ;     RST_SYN_OUT;
+ 0002 A79A              sbi 0x14,7
+ 0004                   .dbline 30
+ 0004           ;     SRT_SYN_SET;
+ 0004 AE9A              sbi 0x15,6
+ 0006                   .dbline 31
+ 0006           ;     RST_SYN_SET;
+ 0006 AF9A              sbi 0x15,7
+ 0008                   .dbline 32
+ 0008           ;     delay_nms(100);
+ 0008 04E6              ldi R16,100
+ 000A 10E0              ldi R17,0
+ 000C 0E940000          xcall _delay_nms
+ 0010                   .dbline 33
+ 0010           ;     RST_SYN_CLR;
+ 0010 AF98              cbi 0x15,7
+ 0012                   .dbline 34
+ 0012           ;     delay_nms(10);
+ 0012 0AE0              ldi R16,10
+ 0014 10E0              ldi R17,0
+ 0016 0E940000          xcall _delay_nms
+ 001A                   .dbline 35
+ 001A           ;     RST_SYN_SET;
+ 001A AF9A              sbi 0x15,7
+ 001C                   .dbline 36
+ 001C           ;     delay_nms(100);
+ 001C 04E6              ldi R16,100
+ 001E 10E0              ldi R17,0
+ 0020                   .dbline -2
+ 0020           L1:
+ 0020                   .dbline 0 ; func end
+ 0020 0C940000          xjmp _delay_nms
+ 0024                   .dbend
+ 0024                   .dbfunc e buildHead _buildHead fV
+ 0024           ;        command -> R18
+ 0024           ;            len -> R16,R17
+                        .even
+ 0024           _buildHead::
+ 0024                   .dbline -1
+ 0024                   .dbline 43
+ 0024           ; }
+ 0024           ; 
+ 0024           ; /*******************************************************************************
+ 0024           ; * 构造帧头
+ 0024           ; ********************************************************************************/
+ 0024           ; void buildHead(uint len, uchar command)
+ 0024           ; {
+ 0024                   .dbline 44
+ 0024           ;     TxCharBuf[0] = 0xFD;        //构造帧头
+ 0024 8DEF              ldi R24,253
+ 0026 80930000          sts _TxCharBuf,R24
+ 002A                   .dbline 45
+ 002A           ;     TxCharBuf[1] = len >> 8;    //构造数据区长度的高字节
+ 002A 1801              movw R2,R16
+ 002C 232C              mov R2,R3
+ 002E 3324              clr R3
+ 0030 20920100          sts _TxCharBuf+1,R2
+ 0034                   .dbline 46
+ 0034           ;     TxCharBuf[2] = len & 0xff;  //构造数据区长度的低字节
+ 0034 C801              movw R24,R16
+ 0036 9070              andi R25,0
+ 0038 80930200          sts _TxCharBuf+2,R24
+ 003C                   .dbline 47
+ 003C           ;     TxCharBuf[3] = command;     //构造命令字
+ 003C 20930300          sts _TxCharBuf+3,R18
+ 0040                   .dbline 48
+ 0040           ;     TxCharBuf[4] = 0x00;
+ 0040 2224              clr R2
+ 0042 20920400          sts _TxCharBuf+4,R2
+ 0046                   .dbline -2
+ 0046           L2:
+ 0046                   .dbline 0 ; func end
+ 0046 0895              ret
+ 0048                   .dbsym r command 18 c
+ 0048                   .dbsym r len 16 i
+ 0048                   .dbend
+ 0048                   .dbfunc e checkSendReturn _checkSendReturn fi
+ 0048           ;        command -> R12
+ 0048           ;         length -> R10
+ 0048           ;         number -> R20
+ 0048           ;           RxSt -> R22
+                        .even
+ 0048           _checkSendReturn::
+ 0048 0E940000          xcall push_xgsetF03C
+ 004C                   .dbline -1
+ 004C                   .dbline 55
+ 004C           ; }
+ 004C           ; 
+ 004C           ; /*******************************************************************************
+ 004C           ; * 检查回传 通用
+ 004C           ; ********************************************************************************/
+ 004C           ; uint checkSendReturn(void)
+ 004C           ; {   
+ 004C                   .dbline 56
+ 004C           ;     uchar RxSt, command, length, number = 0;
+ 004C 4427              clr R20
+ 004E                   .dbline 57
+ 004E           ;     wordID = 0x0000;
+ 004E 2224              clr R2
+ 0050 3324              clr R3
+ 0052 30924600          sts _wordID+1,R3
+ 0056 20924500          sts _wordID,R2
+ 005A                   .dbline 58
+ 005A           ;     do {
+ 005A 04C0              xjmp L12
+ 005C           L11:
+ 005C                   .dbline 59
+ 005C           ;         while(RxBufRd == RxBufWr) delay_nms(1);
+ 005C 01E0              ldi R16,1
+ 005E 10E0              ldi R17,0
+ 0060 0E940000          xcall _delay_nms
+ 0064           L12:
+ 0064                   .dbline 59
+ 0064 20900000          lds R2,_RxBufWr
+ 0068 30900000          lds R3,_RxBufRd
+ 006C 3214              cp R3,R2
+ 006E B1F3              breq L11
+ 0070           X0:
+ 0070                   .dbline 60
+ 0070           ;         RxSt = RxCharBuf[RxBufRd];
+ 0070 80E0              ldi R24,<_RxCharBuf
+ 0072 90E0              ldi R25,>_RxCharBuf
+ 0074 E32D              mov R30,R3
+ 0076 FF27              clr R31
+ 0078 E80F              add R30,R24
+ 007A F91F              adc R31,R25
+ 007C 6081              ldd R22,z+0
+ 007E                   .dbline 61
+ 007E           ;         RxBufRd ++;
+ 007E 832D              mov R24,R3
+ 0080 8F5F              subi R24,255    ; addi 1
+ 0082 80930000          sts _RxBufRd,R24
+ 0086                   .dbline 62
+ 0086           ;         RxBufRd &= 0x0f;
+ 0086 8F70              andi R24,15
+ 0088 80930000          sts _RxBufRd,R24
+ 008C                   .dbline 63
+ 008C           ;         switch(number){
+ 008C C42E              mov R12,R20
+ 008E DD24              clr R13
+ 0090 CC20              tst R12
+ 0092 11F4              brne X1
+ 0094 DD20              tst R13
+ 0096 91F0              breq L17
+ 0098           X1:
+ 0098 C601              movw R24,R12
+ 009A 8130              cpi R24,1
+ 009C E0E0              ldi R30,0
+ 009E 9E07              cpc R25,R30
+ 00A0 91F0              breq L20
+ 00A2           X2:
+ 00A2 8230              cpi R24,2
+ 00A4 E0E0              ldi R30,0
+ 00A6 9E07              cpc R25,R30
+ 00A8 A9F0              breq L23
+ 00AA           X3:
+ 00AA 8330              cpi R24,3
+ 00AC E0E0              ldi R30,0
+ 00AE 9E07              cpc R25,R30
+ 00B0 D1F0              breq L26
+ 00B2           X4:
+ 00B2 8430              cpi R24,4
+ 00B4 E0E0              ldi R30,0
+ 00B6 9E07              cpc R25,R30
+ 00B8 19F1              breq L31
+ 00BA           X5:
+ 00BA 3CC0              xjmp L14
+ 00BC           L17:
+ 00BC                   .dbline 65
+ 00BC           ;             case 0 :
+ 00BC           ;                 if (RxSt == 0xFC){
+ 00BC 6C3F              cpi R22,252
+ 00BE 09F0              breq X13
+ 00C0 39C0              xjmp L15
+ 00C2           X13:
+ 00C2           X6:
+ 00C2                   .dbline 65
+ 00C2                   .dbline 66
+ 00C2           ;                     number = 1;
+ 00C2 41E0              ldi R20,1
+ 00C4                   .dbline 67
+ 00C4           ;                 }
+ 00C4                   .dbline 68
+ 00C4           ;                 break;
+ 00C4 37C0              xjmp L15
+ 00C6           L20:
+ 00C6                   .dbline 70
+ 00C6           ;             case 1 : 
+ 00C6           ;                 if(RxSt != 0)
+ 00C6 6623              tst R22
+ 00C8 19F0              breq L21
+ 00CA           X7:
+ 00CA                   .dbline 71
+ 00CA           ;                     return 0;
+ 00CA 0027              clr R16
+ 00CC 1127              clr R17
+ 00CE 33C0              xjmp L7
+ 00D0           L21:
+ 00D0                   .dbline 72
+ 00D0           ;                 number = 2;
+ 00D0 42E0              ldi R20,2
+ 00D2                   .dbline 73
+ 00D2           ;                 break;
+ 00D2 30C0              xjmp L15
+ 00D4           L23:
+ 00D4                   .dbline 75
+ 00D4           ;            case 2 :
+ 00D4           ;                 if(RxSt > 6)
+ 00D4 86E0              ldi R24,6
+ 00D6 8617              cp R24,R22
+ 00D8 18F4              brsh L24
+ 00DA           X8:
+ 00DA                   .dbline 76
+ 00DA           ;                     return 0;
+ 00DA 0027              clr R16
+ 00DC 1127              clr R17
+ 00DE 2BC0              xjmp L7
+ 00E0           L24:
+ 00E0                   .dbline 77
+ 00E0           ;                 length = RxSt;
+ 00E0 A62E              mov R10,R22
+ 00E2                   .dbline 78
+ 00E2           ;                 number = 3;
+ 00E2 43E0              ldi R20,3
+ 00E4                   .dbline 79
+ 00E4           ;                 break;
+ 00E4 27C0              xjmp L15
+ 00E6           L26:
+ 00E6                   .dbline 81
+ 00E6           ;            case 3 : 
+ 00E6           ;                 if(RxSt == ACC_ERR)
+ 00E6 6534              cpi R22,69
+ 00E8 19F4              brne L27
+ 00EA           X9:
+ 00EA                   .dbline 82
+ 00EA           ;                     return 0;
+ 00EA 0027              clr R16
+ 00EC 1127              clr R17
+ 00EE 23C0              xjmp L7
+ 00F0           L27:
+ 00F0                   .dbline 83
+ 00F0           ;                 length--;
+ 00F0 AA94              dec R10
+ 00F2                   .dbline 84
+ 00F2           ;                 if(length == 0)
+ 00F2 19F4              brne L29
+ 00F4           X10:
+ 00F4                   .dbline 85
+ 00F4           ;                     return RxSt;
+ 00F4 062F              mov R16,R22
+ 00F6 1127              clr R17
+ 00F8 1EC0              xjmp L7
+ 00FA           L29:
+ 00FA                   .dbline 86
+ 00FA           ;                 command = RxSt;
+ 00FA C62E              mov R12,R22
+ 00FC                   .dbline 87
+ 00FC           ;                 number = 4;
+ 00FC 44E0              ldi R20,4
+ 00FE                   .dbline 88
+ 00FE           ;                 break;
+ 00FE 1AC0              xjmp L15
+ 0100           L31:
+ 0100                   .dbline 90
+ 0100           ;             case 4 :
+ 0100           ;                 wordID <<= 8;
+ 0100 20904500          lds R2,_wordID
+ 0104 30904600          lds R3,_wordID+1
+ 0108 322C              mov R3,R2
+ 010A 2224              clr R2
+ 010C 30924600          sts _wordID+1,R3
+ 0110 20924500          sts _wordID,R2
+ 0114                   .dbline 91
+ 0114           ;                 wordID |= RxSt;
+ 0114 262E              mov R2,R22
+ 0116 3324              clr R3
+ 0118 40904500          lds R4,_wordID
+ 011C 50904600          lds R5,_wordID+1
+ 0120 4228              or R4,R2
+ 0122 5328              or R5,R3
+ 0124 50924600          sts _wordID+1,R5
+ 0128 40924500          sts _wordID,R4
+ 012C                   .dbline 93
+ 012C           ;                 //wordID |= command;
+ 012C           ;                 length--;
+ 012C AA94              dec R10
+ 012E                   .dbline 94
+ 012E           ;                 if(length == 0)
+ 012E 11F4              brne L15
+ 0130           X11:
+ 0130                   .dbline 95
+ 0130           ;                     return wordID;
+ 0130 8201              movw R16,R4
+ 0132 01C0              xjmp L7
+ 0134           L14:
+ 0134           L15:
+ 0134                   .dbline 98
+ 0134           ;                 break;
+ 0134           ;         }
+ 0134           ;     }while(1);
+ 0134           L9:
+ 0134                   .dbline 98
+ 0134 97CF              xjmp L12
+ 0136           X12:
+ 0136                   .dbline -2
+ 0136           L7:
+ 0136                   .dbline 0 ; func end
+ 0136 0C940000          xjmp pop_xgsetF03C
+ 013A                   .dbsym r command 12 c
+ 013A                   .dbsym r length 10 c
+ 013A                   .dbsym r number 20 c
+ 013A                   .dbsym r RxSt 22 c
+ 013A                   .dbend
+ 013A                   .dbfunc e voicePlayer _voicePlayer fV
+ 013A           ;           temp -> <dead>
+ 013A           ;         length -> R20,R21
+ 013A           ;              i -> R22,R23
+ 013A           ;        content -> R10,R11
+                        .even
+ 013A           _voicePlayer::
+ 013A 0E940000          xcall push_xgsetF00C
+ 013E 5801              movw R10,R16
+ 0140                   .dbline -1
+ 0140                   .dbline 107
+ 0140           ;     return 0;
+ 0140           ; }
+ 0140           ; 
+ 0140           ; 
+ 0140           ; /*******************************************************************************
+ 0140           ; * 语音播报
+ 0140           ; ********************************************************************************/
+ 0140           ; void voicePlayer(uchar *content)
+ 0140           ; {   
+ 0140                   .dbline 110
+ 0140           ;     int i;
+ 0140           ;     uchar temp;
+ 0140           ;     uint length = strlen(content); //待发送文本长度
+ 0140 8501              movw R16,R10
+ 0142 0E940000          xcall _strlen
+ 0146 A801              movw R20,R16
+ 0148                   .dbline 111
+ 0148           ;     buildHead(length+2, PLAY_TEXT); //数据区长度、合成播放命令
+ 0148 21E0              ldi R18,1
+ 014A 0E5F              subi R16,254  ; offset = 2
+ 014C 1F4F              sbci R17,255
+ 014E 6ADF              xcall _buildHead
+ 0150                   .dbline 112
+ 0150           ;     TxCharBuf[4] = GB2312;   //构造命令参数,编码格式为GB2312
+ 0150 2224              clr R2
+ 0152 20920400          sts _TxCharBuf+4,R2
+ 0156                   .dbline 113
+ 0156           ;     for(i = 0; i < length; i++){    //构造待发送文本
+ 0156 6627              clr R22
+ 0158 7727              clr R23
+ 015A 0CC0              xjmp L39
+ 015C           L36:
+ 015C                   .dbline 113
+ 015C                   .dbline 114
+ 015C           ;         TxCharBuf[5+i] = content[i]; 
+ 015C FB01              movw R30,R22
+ 015E EA0D              add R30,R10
+ 0160 FB1D              adc R31,R11
+ 0162 2080              ldd R2,z+0
+ 0164 80E0              ldi R24,<_TxCharBuf+5
+ 0166 90E0              ldi R25,>_TxCharBuf+5
+ 0168 FB01              movw R30,R22
+ 016A E80F              add R30,R24
+ 016C F91F              adc R31,R25
+ 016E 2082              std z+0,R2
+ 0170                   .dbline 115
+ 0170           ;     }
+ 0170           L37:
+ 0170                   .dbline 113
+ 0170 6F5F              subi R22,255  ; offset = 1
+ 0172 7F4F              sbci R23,255
+ 0174           L39:
+ 0174                   .dbline 113
+ 0174 6417              cp R22,R20
+ 0176 7507              cpc R23,R21
+ 0178 88F3              brlo L36
+ 017A           X14:
+ 017A                   .dbline 116
+ 017A           ;     TxCharBuf[5+i] = 0x00;
+ 017A 80E0              ldi R24,<_TxCharBuf+5
+ 017C 90E0              ldi R25,>_TxCharBuf+5
+ 017E FB01              movw R30,R22
+ 0180 E80F              add R30,R24
+ 0182 F91F              adc R31,R25
+ 0184 2224              clr R2
+ 0186 2082              std z+0,R2
+ 0188                   .dbline 118
+ 0188           ; 
+ 0188           ;     TxStrLen = length+5;   //整个帧的长度
+ 0188 CA01              movw R24,R20
+ 018A 0596              adiw R24,5
+ 018C 80930000          sts _TxStrLen,R24
+ 0190           L42:
+ 0190                   .dbline 119
+ 0190           ;     do {      
+ 0190                   .dbline 120
+ 0190           ;         RxBufRd = RxBufWr = 0;
+ 0190 2224              clr R2
+ 0192 20920000          sts _RxBufWr,R2
+ 0196 20920000          sts _RxBufRd,R2
+ 019A                   .dbline 121
+ 019A           ;         puts0();                    //串口0发送数据
+ 019A 0E940000          xcall _puts0
+ 019E                   .dbline 122
+ 019E           ;         if(checkSendReturn() != ACC_OK)
+ 019E 54DF              xcall _checkSendReturn
+ 01A0 0134              cpi R16,65
+ 01A2 E0E0              ldi R30,0
+ 01A4 1E07              cpc R17,R30
+ 01A6 29F0              breq L44
+ 01A8           X15:
+ 01A8                   .dbline 123
+ 01A8           ;             delay_nms(20);          //延时20ms，帧与帧之间必须间隔超过15ms
+ 01A8 04E1              ldi R16,20
+ 01AA 10E0              ldi R17,0
+ 01AC 0E940000          xcall _delay_nms
+ 01B0                   .dbline 125
+ 01B0           ;         else
+ 01B0           ;             break;
+ 01B0           L46:
+ 01B0                   .dbline 126
+ 01B0           ;     }while(1);
+ 01B0           L43:
+ 01B0                   .dbline 126
+ 01B0 EFCF              xjmp L42
+ 01B2           L44:
+ 01B2                   .dbline 127
+ 01B2           ;     if(checkSendReturn() == STA_FREE)
+ 01B2 4ADF              xcall _checkSendReturn
+ 01B4 A801              movw R20,R16
+ 01B6 0F34              cpi R16,79
+ 01B8 E0E0              ldi R30,0
+ 01BA 1E07              cpc R17,R30
+ 01BC 09F4              brne L47
+ 01BE           X16:
+ 01BE                   .dbline 128
+ 01BE           ;         return;
+ 01BE 01C0              xjmp L34
+ 01C0           L47:
+ 01C0                   .dbline 130
+ 01C0           ;     else
+ 01C0           ;         waitFree();                 //等待模块空闲                        
+ 01C0 C8D0              xcall _waitFree
+ 01C2                   .dbline -2
+ 01C2           L34:
+ 01C2                   .dbline 0 ; func end
+ 01C2 0C940000          xjmp pop_xgsetF00C
+ 01C6                   .dbsym l temp 1 c
+ 01C6                   .dbsym r length 20 i
+ 01C6                   .dbsym r i 22 I
+ 01C6                   .dbsym r content 10 pc
+ 01C6                   .dbend
+ 01C6                   .dbfunc e SYN7318_welcome _SYN7318_welcome fV
+                        .even
+ 01C6           _SYN7318_welcome::
+ 01C6                   .dbline -1
+ 01C6                   .dbline 137
+ 01C6           ; }
+ 01C6           ; 
+ 01C6           ; /*******************************************************************************
+ 01C6           ; * 语音播报欢迎信息
+ 01C6           ; ********************************************************************************/
+ 01C6           ; void SYN7318_welcome(void)
+ 01C6           ; {
+ 01C6                   .dbline 138
+ 01C6           ;     sprintf(tmp_text,"[m3][s5][v3][f1][b0]欢迎使用独居老人应急呼救系统[m3][d]");
+ 01C6 20E0              ldi R18,<L50
+ 01C8 30E0              ldi R19,>L50
+ 01CA 00E0              ldi R16,<_tmp_text
+ 01CC 10E0              ldi R17,>_tmp_text
+ 01CE 0E940000          xcall _sprintf
+ 01D2                   .dbline 139
+ 01D2           ;     voicePlayer(tmp_text);
+ 01D2 00E0              ldi R16,<_tmp_text
+ 01D4 10E0              ldi R17,>_tmp_text
+ 01D6                   .dbline -2
+ 01D6           L49:
+ 01D6                   .dbline 0 ; func end
+ 01D6 B1CF              xjmp _voicePlayer
+ 01D8                   .dbend
+ 01D8                   .dbfunc e SYN7318_Error _SYN7318_Error fV
+                        .even
+ 01D8           _SYN7318_Error::
+ 01D8                   .dbline -1
+ 01D8                   .dbline 146
+ 01D8           ; }
+ 01D8           ; 
+ 01D8           ; /*******************************************************************************
+ 01D8           ; * 语音播报 识别错误提示
+ 01D8           ; ********************************************************************************/
+ 01D8           ; void SYN7318_Error(void)
+ 01D8           ; {
+ 01D8                   .dbline 147
+ 01D8           ;     sprintf(tmp_text,"[m3][s5][v3][f1][b0]不好意思，系统未理解您的意思，请重新说一遍[m3][d]");
+ 01D8 20E0              ldi R18,<L52
+ 01DA 30E0              ldi R19,>L52
+ 01DC 00E0              ldi R16,<_tmp_text
+ 01DE 10E0              ldi R17,>_tmp_text
+ 01E0 0E940000          xcall _sprintf
+ 01E4                   .dbline 148
+ 01E4           ;     voicePlayer(tmp_text);
+ 01E4 00E0              ldi R16,<_tmp_text
+ 01E6 10E0              ldi R17,>_tmp_text
+ 01E8                   .dbline -2
+ 01E8           L51:
+ 01E8                   .dbline 0 ; func end
+ 01E8 A8CF              xjmp _voicePlayer
+ 01EA                   .dbend
+ 01EA                   .dbfunc e setVoiceLevel _setVoiceLevel fV
+ 01EA           ;          level -> R10
+                        .even
+ 01EA           _setVoiceLevel::
+ 01EA AA92              st -y,R10
+ 01EC A02E              mov R10,R16
+ 01EE                   .dbline -1
+ 01EE                   .dbline 155
+ 01EE           ; }
+ 01EE           ; 
+ 01EE           ; /*******************************************************************************
+ 01EE           ; * 设置播放音量
+ 01EE           ; ********************************************************************************/
+ 01EE           ; void setVoiceLevel(uchar level)
+ 01EE           ; {
+ 01EE                   .dbline 156
+ 01EE           ;     buildHead(0x02, SET_VOLUME); //数据区长度、播放音量设置命令
+ 01EE 25E0              ldi R18,5
+ 01F0 02E0              ldi R16,2
+ 01F2 10E0              ldi R17,0
+ 01F4 17DF              xcall _buildHead
+ 01F6                   .dbline 157
+ 01F6           ;     TxCharBuf[4] = level;   //构造命令参数,播放音量设置为level级（0-9级，默认为5级）
+ 01F6 A0920400          sts _TxCharBuf+4,R10
+ 01FA                   .dbline 158
+ 01FA           ;     TxStrLen = strlen(TxCharBuf);   //整个帧的长度
+ 01FA 00E0              ldi R16,<_TxCharBuf
+ 01FC 10E0              ldi R17,>_TxCharBuf
+ 01FE 0E940000          xcall _strlen
+ 0202 00930000          sts _TxStrLen,R16
+ 0206           L55:
+ 0206                   .dbline 159
+ 0206           ;       do{
+ 0206                   .dbline 160
+ 0206           ;         RxBufRd = RxBufWr = 0;
+ 0206 2224              clr R2
+ 0208 20920000          sts _RxBufWr,R2
+ 020C 20920000          sts _RxBufRd,R2
+ 0210                   .dbline 161
+ 0210           ;         puts0();                        //串口0发送数据
+ 0210 0E940000          xcall _puts0
+ 0214                   .dbline 162
+ 0214           ;     }while(checkSendReturn() == 0);
+ 0214           L56:
+ 0214                   .dbline 162
+ 0214 19DF              xcall _checkSendReturn
+ 0216 0030              cpi R16,0
+ 0218 0107              cpc R16,R17
+ 021A A9F3              breq L55
+ 021C           X17:
+ 021C                   .dbline 164
+ 021C           ;     //while(checkReturnByParam(0x4F) == 0);
+ 021C           ;     delay_nms(20);                  //延时20ms，帧与帧之间必须间隔超过15ms 
+ 021C 04E1              ldi R16,20
+ 021E 10E0              ldi R17,0
+ 0220 0E940000          xcall _delay_nms
+ 0224                   .dbline -2
+ 0224           L53:
+ 0224                   .dbline 0 ; func end
+ 0224 A990              ld R10,y+
+ 0226 0895              ret
+ 0228                   .dbsym r level 10 c
+ 0228                   .dbend
+ 0228                   .dbfunc e setVoiceOption _setVoiceOption fV
+                        .even
+ 0228           _setVoiceOption::
+ 0228                   .dbline -1
+ 0228                   .dbline 172
+ 0228           ;     
+ 0228           ; }
+ 0228           ; 
+ 0228           ; /*******************************************************************************
+ 0228           ; * 设置语音识别参数命令
+ 0228           ; ********************************************************************************/
+ 0228           ; void setVoiceOption(void)
+ 0228           ; {
+ 0228                   .dbline 173
+ 0228           ;     buildHead(0x07, SET_PARAM);
+ 0228 2EE1              ldi R18,30
+ 022A 07E0              ldi R16,7
+ 022C 10E0              ldi R17,0
+ 022E FADE              xcall _buildHead
+ 0230                   .dbline 174
+ 0230           ;     TxCharBuf[4] = DIS_NEAR; //设置识别距离为 中
+ 0230 82E0              ldi R24,2
+ 0232 80930400          sts _TxCharBuf+4,R24
+ 0236                   .dbline 175
+ 0236           ;     TxCharBuf[5] = QUI_H; //用户静音上限高字节
+ 0236 8BE0              ldi R24,11
+ 0238 80930500          sts _TxCharBuf+5,R24
+ 023C                   .dbline 176
+ 023C           ;     TxCharBuf[6] = QUI_L; //用户静音上限低字节 3000ms
+ 023C 88EB              ldi R24,184
+ 023E 80930600          sts _TxCharBuf+6,R24
+ 0242                   .dbline 177
+ 0242           ;     TxCharBuf[7] = RECO_TIME_H; //用户语音上限高字节
+ 0242 83E1              ldi R24,19
+ 0244 80930700          sts _TxCharBuf+7,R24
+ 0248                   .dbline 178
+ 0248           ;     TxCharBuf[8] = RECO_TIME_L; //用户语音上限低字节 5000ms
+ 0248 88E8              ldi R24,136
+ 024A 80930800          sts _TxCharBuf+8,R24
+ 024E                   .dbline 179
+ 024E           ;     TxCharBuf[9] = REFUSE_LEVEL; //拒识级别 较低
+ 024E 84E0              ldi R24,4
+ 0250 80930900          sts _TxCharBuf+9,R24
+ 0254                   .dbline 181
+ 0254           ;     
+ 0254           ;     TxStrLen = 10;   //整个帧的长度
+ 0254 8AE0              ldi R24,10
+ 0256 80930000          sts _TxStrLen,R24
+ 025A           L65:
+ 025A                   .dbline 182
+ 025A           ;     do{
+ 025A                   .dbline 183
+ 025A           ;         RxBufRd = RxBufWr = 0;
+ 025A 2224              clr R2
+ 025C 20920000          sts _RxBufWr,R2
+ 0260 20920000          sts _RxBufRd,R2
+ 0264                   .dbline 184
+ 0264           ;           puts0();                        //串口0发送数据
+ 0264 0E940000          xcall _puts0
+ 0268                   .dbline 185
+ 0268           ;         if(checkSendReturn() == ACC_OK){
+ 0268 EFDE              xcall _checkSendReturn
+ 026A 0134              cpi R16,65
+ 026C E0E0              ldi R30,0
+ 026E 1E07              cpc R17,R30
+ 0270 09F4              brne L68
+ 0272           X18:
+ 0272                   .dbline 185
+ 0272                   .dbline 186
+ 0272           ;            break;
+ 0272 01C0              xjmp L67
+ 0274           L68:
+ 0274                   .dbline 188
+ 0274           ;         }
+ 0274           ;     }while(1); 
+ 0274           L66:
+ 0274                   .dbline 188
+ 0274 F2CF              xjmp L65
+ 0276           L67:
+ 0276                   .dbline 189
+ 0276           ;     delay_nms(20);                  //延时20ms，帧与帧之间必须间隔超过15ms  
+ 0276 04E1              ldi R16,20
+ 0278 10E0              ldi R17,0
+ 027A                   .dbline -2
+ 027A           L58:
+ 027A                   .dbline 0 ; func end
+ 027A 0C940000          xjmp _delay_nms
+ 027E                   .dbend
+ 027E                   .dbfunc e updateWords _updateWords fV
+ 027E           ;         length -> R20
+ 027E           ;              i -> R22,R23
+                        .even
+ 027E           _updateWords::
+ 027E 0E940000          xcall push_xgsetF000
+ 0282                   .dbline -1
+ 0282                   .dbline 196
+ 0282           ; }
+ 0282           ; 
+ 0282           ; /*******************************************************************************
+ 0282           ; * 词条更新
+ 0282           ; ********************************************************************************/
+ 0282           ; void updateWords(void)
+ 0282           ; {
+ 0282                   .dbline 198
+ 0282           ;     int i;
+ 0282           ;     uchar length = strlen(words);
+ 0282 00E0              ldi R16,<_words
+ 0284 10E0              ldi R17,>_words
+ 0286 0E940000          xcall _strlen
+ 028A 402F              mov R20,R16
+ 028C                   .dbline 199
+ 028C           ;     buildHead(length+3, UPADTE_WORD);
+ 028C 2FE1              ldi R18,31
+ 028E 1127              clr R17
+ 0290 0D5F              subi R16,253  ; offset = 3
+ 0292 1F4F              sbci R17,255
+ 0294 C7DE              xcall _buildHead
+ 0296                   .dbline 200
+ 0296           ;     TxCharBuf[4] = GB2312;          //编码格式GB2312
+ 0296 2224              clr R2
+ 0298 20920400          sts _TxCharBuf+4,R2
+ 029C                   .dbline 201
+ 029C           ;     TxCharBuf[5] = 0x20;            //词典参数，启用内置智能解析，关闭内置垃圾词条，词典编号为0x00
+ 029C 80E2              ldi R24,32
+ 029E 80930500          sts _TxCharBuf+5,R24
+ 02A2                   .dbline 202
+ 02A2           ;     for(i = 0; i < length; i++){    //词条
+ 02A2 6627              clr R22
+ 02A4 7727              clr R23
+ 02A6 0EC0              xjmp L76
+ 02A8           L73:
+ 02A8                   .dbline 202
+ 02A8                   .dbline 203
+ 02A8           ;         TxCharBuf[6+i] = words[i];
+ 02A8 80E0              ldi R24,<_words
+ 02AA 90E0              ldi R25,>_words
+ 02AC FB01              movw R30,R22
+ 02AE E80F              add R30,R24
+ 02B0 F91F              adc R31,R25
+ 02B2 2080              ldd R2,z+0
+ 02B4 80E0              ldi R24,<_TxCharBuf+6
+ 02B6 90E0              ldi R25,>_TxCharBuf+6
+ 02B8 FB01              movw R30,R22
+ 02BA E80F              add R30,R24
+ 02BC F91F              adc R31,R25
+ 02BE 2082              std z+0,R2
+ 02C0                   .dbline 204
+ 02C0           ;     }
+ 02C0           L74:
+ 02C0                   .dbline 202
+ 02C0 6F5F              subi R22,255  ; offset = 1
+ 02C2 7F4F              sbci R23,255
+ 02C4           L76:
+ 02C4                   .dbline 202
+ 02C4 242E              mov R2,R20
+ 02C6 3324              clr R3
+ 02C8 6215              cp R22,R2
+ 02CA 7305              cpc R23,R3
+ 02CC 6CF3              brlt L73
+ 02CE           X19:
+ 02CE                   .dbline 206
+ 02CE           ;     
+ 02CE           ;     TxStrLen = length + 6;       //整个帧的长度
+ 02CE 822D              mov R24,R2
+ 02D0 8A5F              subi R24,250    ; addi 6
+ 02D2 80930000          sts _TxStrLen,R24
+ 02D6           L78:
+ 02D6                   .dbline 207
+ 02D6           ;       do{
+ 02D6                   .dbline 208
+ 02D6           ;         RxBufRd = RxBufWr = 0;
+ 02D6 2224              clr R2
+ 02D8 20920000          sts _RxBufWr,R2
+ 02DC 20920000          sts _RxBufRd,R2
+ 02E0                   .dbline 209
+ 02E0           ;         puts0();                        //串口0发送数据
+ 02E0 0E940000          xcall _puts0
+ 02E4                   .dbline 210
+ 02E4           ;         DisplayCgrom(0x88,"正在更新词条。。");
+ 02E4 20E0              ldi R18,<L81
+ 02E6 30E0              ldi R19,>L81
+ 02E8 08E8              ldi R16,136
+ 02EA 0E940000          xcall _DisplayCgrom
+ 02EE                   .dbline 211
+ 02EE           ;         delay_nms(2);
+ 02EE 02E0              ldi R16,2
+ 02F0 10E0              ldi R17,0
+ 02F2 0E940000          xcall _delay_nms
+ 02F6                   .dbline 212
+ 02F6           ;         if(checkSendReturn() == ACC_OK){
+ 02F6 A8DE              xcall _checkSendReturn
+ 02F8 0134              cpi R16,65
+ 02FA E0E0              ldi R30,0
+ 02FC 1E07              cpc R17,R30
+ 02FE 09F4              brne L82
+ 0300           X20:
+ 0300                   .dbline 212
+ 0300                   .dbline 213
+ 0300           ;             break;
+ 0300 05C0              xjmp L80
+ 0302           L82:
+ 0302                   .dbline 215
+ 0302           ;         }
+ 0302           ;         else{
+ 0302                   .dbline 216
+ 0302           ;             delay_nms(20);
+ 0302 04E1              ldi R16,20
+ 0304 10E0              ldi R17,0
+ 0306 0E940000          xcall _delay_nms
+ 030A                   .dbline 217
+ 030A           ;         }
+ 030A                   .dbline 218
+ 030A           ;     }while(1);
+ 030A           L79:
+ 030A                   .dbline 218
+ 030A E5CF              xjmp L78
+ 030C           L80:
+ 030C                   .dbline 219
+ 030C           ;     if(checkSendReturn() == UPD_OK){    //检查回传 ，词条更新时不能被打断
+ 030C 9DDE              xcall _checkSendReturn
+ 030E A801              movw R20,R16
+ 0310 0133              cpi R16,49
+ 0312 E0E0              ldi R30,0
+ 0314 1E07              cpc R17,R30
+ 0316 71F4              brne L84
+ 0318           X21:
+ 0318                   .dbline 219
+ 0318                   .dbline 220
+ 0318           ;         LCD_clear();
+ 0318 0E940000          xcall _LCD_clear
+ 031C                   .dbline 221
+ 031C           ;         DisplayCgrom(0x88,"词条更新成功");
+ 031C 20E0              ldi R18,<L86
+ 031E 30E0              ldi R19,>L86
+ 0320 08E8              ldi R16,136
+ 0322 0E940000          xcall _DisplayCgrom
+ 0326                   .dbline 222
+ 0326           ;         delay_nms(1000);
+ 0326 08EE              ldi R16,1000
+ 0328 13E0              ldi R17,3
+ 032A 0E940000          xcall _delay_nms
+ 032E                   .dbline 223
+ 032E           ;         LCD_clear();
+ 032E 0E940000          xcall _LCD_clear
+ 0332                   .dbline 224
+ 0332           ;     }else{
+ 0332 0DC0              xjmp L85
+ 0334           L84:
+ 0334                   .dbline 224
+ 0334                   .dbline 225
+ 0334           ;         LCD_clear();
+ 0334 0E940000          xcall _LCD_clear
+ 0338                   .dbline 226
+ 0338           ;         DisplayCgrom(0x88,"词条更新失败");
+ 0338 20E0              ldi R18,<L87
+ 033A 30E0              ldi R19,>L87
+ 033C 08E8              ldi R16,136
+ 033E 0E940000          xcall _DisplayCgrom
+ 0342                   .dbline 227
+ 0342           ;         delay_nms(1000);
+ 0342 08EE              ldi R16,1000
+ 0344 13E0              ldi R17,3
+ 0346 0E940000          xcall _delay_nms
+ 034A                   .dbline 228
+ 034A           ;         LCD_clear();
+ 034A 0E940000          xcall _LCD_clear
+ 034E                   .dbline 229
+ 034E           ;     }
+ 034E           L85:
+ 034E                   .dbline -2
+ 034E           L70:
+ 034E                   .dbline 0 ; func end
+ 034E 0C940000          xjmp pop_xgsetF000
+ 0352                   .dbsym r length 20 c
+ 0352                   .dbsym r i 22 I
+ 0352                   .dbend
+ 0352                   .dbfunc e waitFree _waitFree fV
+                        .even
+ 0352           _waitFree::
+ 0352                   .dbline -1
+ 0352                   .dbline 238
+ 0352           ;     //延时20ms，帧与帧之间必须间隔超过15ms
+ 0352           ;     
+ 0352           ; }
+ 0352           ; 
+ 0352           ; /*******************************************************************************
+ 0352           ; * 等待模块空闲状态
+ 0352           ; ********************************************************************************/
+ 0352           ; void waitFree(void)
+ 0352           ; {
+ 0352                   .dbline 239
+ 0352           ;     buildHead(0x01, CHECK_STATUS);
+ 0352 21E2              ldi R18,33
+ 0354 01E0              ldi R16,1
+ 0356 10E0              ldi R17,0
+ 0358 65DE              xcall _buildHead
+ 035A                   .dbline 240
+ 035A           ;     TxStrLen = 4;//strlen(TxCharBuf);   //整个帧的长度
+ 035A 84E0              ldi R24,4
+ 035C 80930000          sts _TxStrLen,R24
+ 0360           L89:
+ 0360                   .dbline 241
+ 0360           ;     do{
+ 0360                   .dbline 242
+ 0360           ;         RxBufRd = RxBufWr = 0;
+ 0360 2224              clr R2
+ 0362 20920000          sts _RxBufWr,R2
+ 0366 20920000          sts _RxBufRd,R2
+ 036A                   .dbline 243
+ 036A           ;         puts0();                        //串口0发送数据
+ 036A 0E940000          xcall _puts0
+ 036E                   .dbline 244
+ 036E           ;         if(checkSendReturn() == ACC_OK){
+ 036E 6CDE              xcall _checkSendReturn
+ 0370 0134              cpi R16,65
+ 0372 E0E0              ldi R30,0
+ 0374 1E07              cpc R17,R30
+ 0376 31F4              brne L92
+ 0378           X22:
+ 0378                   .dbline 244
+ 0378                   .dbline 245
+ 0378           ;             if(checkSendReturn() == STA_FREE)
+ 0378 67DE              xcall _checkSendReturn
+ 037A 0F34              cpi R16,79
+ 037C E0E0              ldi R30,0
+ 037E 1E07              cpc R17,R30
+ 0380 09F4              brne L94
+ 0382           X23:
+ 0382                   .dbline 246
+ 0382           ;                 break;
+ 0382 05C0              xjmp L91
+ 0384           L94:
+ 0384                   .dbline 247
+ 0384           ;         }
+ 0384           L92:
+ 0384                   .dbline 248
+ 0384           ;         delay_nms(20);      //延时20ms，帧与帧之间必须间隔超过15ms
+ 0384 04E1              ldi R16,20
+ 0386 10E0              ldi R17,0
+ 0388 0E940000          xcall _delay_nms
+ 038C                   .dbline 249
+ 038C           ;     }while(1);              
+ 038C           L90:
+ 038C                   .dbline 249
+ 038C E9CF              xjmp L89
+ 038E           L91:
+ 038E                   .dbline -2
+ 038E           L88:
+ 038E                   .dbline 0 ; func end
+ 038E 0895              ret
+ 0390                   .dbend
+ 0390                   .dbfunc e startRecognition _startRecognition fV
+                        .even
+ 0390           _startRecognition::
+ 0390                   .dbline -1
+ 0390                   .dbline 256
+ 0390           ; }
+ 0390           ; 
+ 0390           ; /*******************************************************************************
+ 0390           ; * 开始语音识别
+ 0390           ; ********************************************************************************/
+ 0390           ; void startRecognition(void)
+ 0390           ; {
+ 0390                   .dbline 257
+ 0390           ;     buildHead(0x02, START_RECOGN);
+ 0390 20E1              ldi R18,16
+ 0392 02E0              ldi R16,2
+ 0394 10E0              ldi R17,0
+ 0396 46DE              xcall _buildHead
+ 0398                   .dbline 258
+ 0398           ;     TxCharBuf[4] = 0x00;     //词典编号
+ 0398 2224              clr R2
+ 039A 20920400          sts _TxCharBuf+4,R2
+ 039E                   .dbline 259
+ 039E           ;     TxStrLen = 5 ;
+ 039E 85E0              ldi R24,5
+ 03A0 80930000          sts _TxStrLen,R24
+ 03A4           L98:
+ 03A4                   .dbline 260
+ 03A4           ;     do{
+ 03A4                   .dbline 261
+ 03A4           ;         RxBufRd = RxBufWr = 0;
+ 03A4 2224              clr R2
+ 03A6 20920000          sts _RxBufWr,R2
+ 03AA 20920000          sts _RxBufRd,R2
+ 03AE                   .dbline 262
+ 03AE           ;         puts0();            //串口0发送数据
+ 03AE 0E940000          xcall _puts0
+ 03B2                   .dbline 263
+ 03B2           ;         if(checkSendReturn() == ACC_OK){
+ 03B2 4ADE              xcall _checkSendReturn
+ 03B4 0134              cpi R16,65
+ 03B6 E0E0              ldi R30,0
+ 03B8 1E07              cpc R17,R30
+ 03BA 09F4              brne L101
+ 03BC           X24:
+ 03BC                   .dbline 263
+ 03BC                   .dbline 264
+ 03BC           ;            break;
+ 03BC 05C0              xjmp L100
+ 03BE           L101:
+ 03BE                   .dbline 266
+ 03BE           ;         }
+ 03BE           ;         delay_nms(20);      //延时20ms，帧与帧之间必须间隔超过15ms
+ 03BE 04E1              ldi R16,20
+ 03C0 10E0              ldi R17,0
+ 03C2 0E940000          xcall _delay_nms
+ 03C6                   .dbline 267
+ 03C6           ;     }while(1);
+ 03C6           L99:
+ 03C6                   .dbline 267
+ 03C6 EECF              xjmp L98
+ 03C8           L100:
+ 03C8                   .dbline -2
+ 03C8           L96:
+ 03C8                   .dbline 0 ; func end
+ 03C8 0895              ret
+ 03CA                   .dbend
+                        .area bss(ram, con, rel)
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0000           _tmp_text::
+ 0000                   .blkb 255
+ 00FF                   .dbsym e tmp_text _tmp_text A[255:255]c
+                        .area data(ram, con, rel)
+ 0047                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0047           L87:
+ 0047                   .blkb 13
+                        .area idata
+ 0047 B4CACCF5B8FCD0C2CAA7B0DC00        .byte 180,202,204,245,184,252,208,194,202,167,176,220,0
+                        .area data(ram, con, rel)
+ 0054                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0054           L86:
+ 0054                   .blkb 13
+                        .area idata
+ 0054 B4CACCF5B8FCD0C2B3C9B9A600        .byte 180,202,204,245,184,252,208,194,179,201,185,166,0
+                        .area data(ram, con, rel)
+ 0061                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0061           L81:
+ 0061                   .blkb 17
+                        .area idata
+ 0061 D5FDD4DAB8FCD0C2B4CACCF5A1A3A1A3  .byte 213,253,212,218,184,252,208,194,180,202,204,245,161,163,161,163
+ 0071 00                .byte 0
+                        .area data(ram, con, rel)
+ 0072                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0072           L52:
+ 0072                   .blkb 70
+                        .area idata
+ 0072 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
+ 0082 5B62305DB2BBBAC3D2E2CBBCA3ACCFB5  .byte 91,'b,48,93,178,187,186,195,210,226,203,188,163,172,207,181
+ 0092 CDB3CEB4C0EDBDE2C4FAB5C4D2E2CBBC  .byte 205,179,206,180,192,237,189,226,196,250,181,196,210,226,203,188
+ 00A2 A3ACC7EBD6D8D0C2CBB5D2BBB1E95B6D  .byte 163,172,199,235,214,216,208,194,203,181,210,187,177,233,91,'m
+ 00B2 335D5B645D00      .byte 51,93,91,'d,93,0
+                        .area data(ram, con, rel)
+ 00B8                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 00B8           L50:
+ 00B8                   .blkb 56
+                        .area idata
+ 00B8 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
+ 00C8 5B62305DBBB6D3ADCAB9D3C3B6C0BED3  .byte 91,'b,48,93,187,182,211,173,202,185,211,195,182,192,190,211
+ 00D8 C0CFC8CBD3A6BCB1BAF4BEC8CFB5CDB3  .byte 192,207,200,203,211,166,188,177,186,244,190,200,207,181,205,179
+ 00E8 5B6D335D5B645D00  .byte 91,'m,51,93,91,'d,93,0
+                        .area data(ram, con, rel)
+ 00F0                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 00F0           ; }

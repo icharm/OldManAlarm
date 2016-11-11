@@ -1,0 +1,33 @@
+#include <string.h>
+#include <stdio.h>
+#include <iom128v.h>
+#include "USART.h"
+#include "basic.h"
+#include "ESP8266.h"
+
+//发送字符数组
+extern uchar TxCharBuf_wifi[128];
+extern uchar TxStrLen_wifi;
+//接收字符数组
+extern uchar RxCharBuf_wifi[16];
+extern uchar RxCharNum_wifi, RxBufWr_wifi, RxBufRd_wifi;
+
+//***********************************************************************
+//	wifi模块重启
+//***********************************************************************
+void wifi_Restart(void)
+{
+    sprintf(TxCharBuf_wifi, "AT+RST");
+    TxStrLen_wifi = strlen(TxCharBuf_wifi);
+	puts1();
+}
+
+//***********************************************************************
+//	wifi模块连接wifi热点
+//***********************************************************************
+void wifi_ConnectSTA(void)
+{
+    sprintf(TxCharBuf_wifi, "AT+CWJAP=ICHARM,meiyanliang");
+    TxStrLen_wifi = strlen(TxCharBuf_wifi);
+	puts1();
+}

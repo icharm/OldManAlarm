@@ -1,0 +1,181 @@
+XL
+H 3 areas 14 global symbols
+M USART.c
+A text size 164 flags 0
+dbfile USART.c
+dbfile E:\git\AVR\OldManAlarm\USART.c
+dbfunc e UART0_Init 0 fV
+dbline FFFFFFFF 0
+dbline 19 0
+dbline 1A 0
+dbline 1B 4
+dbline 1C A
+dbline 1D C
+dbline 1E 10
+dbline 1F 14
+dbline 21 18
+dbline 22 1C
+dbline FFFFFFFE 20
+dbline 0 20
+dbfunc e puts0 22 fV
+dbline FFFFFFFF 22
+dbline 29 22
+dbline 2A 22
+dbline 2A 2A
+dbline 2B 2A
+dbline 2C 3C
+dbline 2C 3C
+dbline 2D 40
+dbline 2E 42
+dbline 2A 42
+dbline 2A 4C
+dbline FFFFFFFE 58
+dbline 0 58
+dbfunc e uart0_rx_isr 5A fV
+dbline FFFFFFFF 68
+dbline 39 68
+dbline 3A 68
+dbline 3B 7A
+dbline 3C 84
+dbline FFFFFFFE 8A
+dbline 0 8A
+dbfunc e UART1_Init 9A fV
+dbline FFFFFFFF 9A
+dbline 46 9A
+dbline 47 9A
+dbline 48 A0
+dbline 49 A6
+dbline 4A AA
+dbline 4B AE
+dbline 4C B4
+dbline 4E BA
+dbline 4F BE
+dbline FFFFFFFE C2
+dbline 0 C2
+dbfunc e puts1 C4 fV
+dbline FFFFFFFF C4
+dbline 56 C4
+dbline 57 C4
+dbline 57 CC
+dbline 58 CC
+dbline 59 E0
+dbline 59 E0
+dbline 5A E8
+dbline 5B F2
+dbline 57 F2
+dbline 57 FC
+dbline 5C 108
+dbline 5D 10E
+dbline 5D 10E
+dbline 5E 116
+dbline FFFFFFFE 120
+dbline 0 120
+dbfunc e uart1_rx_isr 122 fV
+dbline FFFFFFFF 130
+dbline 66 130
+dbline 67 130
+dbline 68 144
+dbline 69 14E
+dbline FFFFFFFE 154
+dbline 0 154
+S _uart0_rx_isr Def005A
+S _uart1_rx_isr Def0122
+S _puts0 Def0022
+S _puts1 Def00C4
+S _UART0_Init Def0000
+S _UART1_Init Def009A
+A vector size 7C flags C
+A bss size 12A flags 20
+dbfile E:\git\AVR\OldManAlarm\USART.c
+dbsym e RxBufRd_wifi 0 c
+dbsym e RxBufWr_wifi 1 c
+dbsym e RxCharNum_wifi 2 c
+dbsym e RxCharBuf_wifi 3 A[16:16]c
+dbsym e TxStrLen_wifi 13 c
+dbsym e TxCharNum_wifi 14 c
+dbsym e TxCharBuf_wifi 15 A[128:128]c
+dbsym e RxBufRd 95 c
+dbsym e RxBufWr 96 c
+dbsym e RxCharNum 97 c
+dbsym e RxCharBuf 98 A[16:16]c
+dbsym e TxStrLen A8 c
+dbsym e TxCharNum A9 c
+dbsym e TxCharBuf AA A[128:128]c
+S _RxBufRd_wifi Def0000
+S _RxBufWr Def0096
+S _RxBufWr_wifi Def0001
+S _TxStrLen Def00A8
+S _TxStrLen_wifi Def0013
+S _RxCharBuf Def0098
+S _TxCharBuf Def00AA
+S _RxCharBuf_wifi Def0003
+S _TxCharBuf_wifi Def0015
+S _RxCharNum Def0097
+S _TxCharNum Def00A9
+S _RxCharNum_wifi Def0002
+S _TxCharNum_wifi Def0014
+S _RxBufRd Def0095
+T 00 00 22 24 2A B8 86 E0 80 93 95 00 2B B8 20 92
+R 00 00 00 00
+T 0E 00 90 00 83 E0 89 B9 88 E9 8A B9 20 92 96 00
+R 00 00 00 00 00 0E 02 00
+T 1C 00 20 92 95 00 08 95
+R 00 00 00 00 00 04 02 00
+T 22 00 22 24 20 92 A9 00 11 C0 80 E0
+R 00 00 00 00 00 06 02 00 20 0A 02 00 AA 00
+T 2C 00 90 E0 E0 91 A9 00 FF 27 E8 0F F9 1F 20 80
+R 00 00 00 00 40 02 02 00 AA 00 00 06 02 00
+T 3A 00 2C B8 5E 9B FE CF 5E 9A 80 91 A9 00 8F 5F
+R 00 00 00 00 00 0C 02 00
+T 48 00 80 93 A9 00 20 90 A8 00 30 90 A9 00 32 14
+R 00 00 00 00 00 04 02 00 00 08 02 00 00 0C 02 00
+T 56 00 48 F3 08 95
+R 00 00 00 00
+T 48 00 0C 94 2D 00
+R 00 00 01 00 10 04 00 00
+T 5A 00 2A 92 8A 93 9A 93 EA 93 FA 93 2F B6 2A 92
+R 00 00 00 00
+T 68 00 80 E0 90 E0 E0 91
+R 00 00 00 00 20 02 02 00 98 00 40 04 02 00 98 00
+T 6E 00 96 00 FF 27 E8 0F F9 1F 2C B0 20 82 80 91
+R 00 00 00 00 00 02 02 00
+T 7C 00 96 00 8F 5F 80 93 96 00 8F 70 80 93 96 00
+R 00 00 00 00 00 02 02 00 00 08 02 00 00 0E 02 00
+T 8A 00 29 90 2F BE F9 91 E9 91 99 91 89 91 29 90
+R 00 00 00 00
+T 98 00 18 95
+R 00 00 00 00
+T 9A 00 22 24 20 92 9A 00 86 E0 80 93 9D 00 20 92
+R 00 00 00 00
+T A8 00 9B 00 20 92 98 00 83 E0 80 93 99 00 88 E9
+R 00 00 00 00
+T B6 00 80 93 9A 00 20 92 01 00 20 92 00 00 08 95
+R 00 00 00 00 00 08 02 00 00 0C 02 00
+T C4 00 22 24 20 92 14 00 18 C0 80 E0
+R 00 00 00 00 00 06 02 00 20 0A 02 00 15 00
+T CE 00 90 E0 E0 91 14 00 FF 27 E8 0F F9 1F 20 80
+R 00 00 00 00 40 02 02 00 15 00 00 06 02 00
+T DC 00 20 92 9C 00 20 90 9B 00 26 FE FC CF 80 91
+R 00 00 00 00
+T EA 00 9B 00 80 64 80 93 9B 00 80 91 14 00 8F 5F
+R 00 00 00 00 00 0C 02 00
+T F8 00 80 93 14 00 20 90 13 00 30 90 14 00 32 14
+R 00 00 00 00 00 04 02 00 00 08 02 00 00 0C 02 00
+T 06 01 10 F3 8D E0 80 93 9C 00 20 90 9B 00 26 FE
+R 00 00 00 00
+T 14 01 FC CF 80 91 9B 00 80 64 80 93 9B 00 08 95
+R 00 00 00 00
+T 78 00 0C 94 91 00
+R 00 00 01 00 10 04 00 00
+T 22 01 2A 92 8A 93 9A 93 EA 93 FA 93 2F B6 2A 92
+R 00 00 00 00
+T 30 01 80 E0 90 E0 E0 91
+R 00 00 00 00 20 02 02 00 03 00 40 04 02 00 03 00
+T 36 01 01 00 FF 27 E8 0F F9 1F 20 90 9C 00 20 82
+R 00 00 00 00 00 02 02 00
+T 44 01 80 91 01 00 8F 5F 80 93 01 00 8F 70 80 93
+R 00 00 00 00 00 04 02 00 00 0A 02 00
+T 52 01 01 00 29 90 2F BE F9 91 E9 91 99 91 89 91
+R 00 00 00 00 00 02 02 00
+T 60 01 29 90 18 95
+R 00 00 00 00

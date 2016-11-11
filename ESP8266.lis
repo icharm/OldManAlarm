@@ -1,0 +1,332 @@
+                        .module ESP8266.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ESP8266.c
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0000                   .dbfunc e wifi_Restart _wifi_Restart fV
+                        .even
+ 0000           _wifi_Restart::
+ 0000                   .dbline -1
+ 0000                   .dbline 19
+ 0000           ; #include <string.h>
+ 0000           ; #include <stdio.h>
+ 0000           ; #include <iom128v.h>
+ 0000           ; #include "USART.h"
+ 0000           ; #include "basic.h"
+ 0000           ; #include "ESP8266.h"
+ 0000           ; 
+ 0000           ; //发送字符数组
+ 0000           ; extern uchar TxCharBuf_wifi[128];
+ 0000           ; extern uchar TxStrLen_wifi;
+ 0000           ; //接收字符数组
+ 0000           ; extern uchar RxCharBuf_wifi[16];
+ 0000           ; extern uchar RxCharNum_wifi, RxBufWr_wifi, RxBufRd_wifi;
+ 0000           ; 
+ 0000           ; //***********************************************************************
+ 0000           ; //    wifi模块重启
+ 0000           ; //***********************************************************************
+ 0000           ; void wifi_Restart(void)
+ 0000           ; {
+ 0000                   .dbline 20
+ 0000           ;     sprintf(TxCharBuf_wifi, "AT+RST");
+ 0000 20E0              ldi R18,<L2
+ 0002 30E0              ldi R19,>L2
+ 0004 00E0              ldi R16,<_TxCharBuf_wifi
+ 0006 10E0              ldi R17,>_TxCharBuf_wifi
+ 0008 0E940000          xcall _sprintf
+ 000C                   .dbline 21
+ 000C           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 000C 00E0              ldi R16,<_TxCharBuf_wifi
+ 000E 10E0              ldi R17,>_TxCharBuf_wifi
+ 0010 0E940000          xcall _strlen
+ 0014 00930000          sts _TxStrLen_wifi,R16
+ 0018                   .dbline 22
+ 0018           ;       puts1();
+ 0018                   .dbline -2
+ 0018           L1:
+ 0018                   .dbline 0 ; func end
+ 0018 0C940000          xjmp _puts1
+ 001C                   .dbend
+ 001C                   .dbfunc e wifi_ConnectSTA _wifi_ConnectSTA fV
+                        .even
+ 001C           _wifi_ConnectSTA::
+ 001C                   .dbline -1
+ 001C                   .dbline 29
+ 001C           ; }
+ 001C           ; 
+ 001C           ; //***********************************************************************
+ 001C           ; //    wifi模块连接wifi热点
+ 001C           ; //***********************************************************************
+ 001C           ; void wifi_ConnectSTA(void)
+ 001C           ; {
+ 001C                   .dbline 30
+ 001C           ;     sprintf(TxCharBuf_wifi, "AT+CWJAP=ICHARM,meiyanliang");
+ 001C 20E0              ldi R18,<L4
+ 001E 30E0              ldi R19,>L4
+ 0020 00E0              ldi R16,<_TxCharBuf_wifi
+ 0022 10E0              ldi R17,>_TxCharBuf_wifi
+ 0024 0E940000          xcall _sprintf
+ 0028                   .dbline 31
+ 0028           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 0028 00E0              ldi R16,<_TxCharBuf_wifi
+ 002A 10E0              ldi R17,>_TxCharBuf_wifi
+ 002C 0E940000          xcall _strlen
+ 0030 00930000          sts _TxStrLen_wifi,R16
+ 0034                   .dbline 32
+ 0034           ;       puts1();
+ 0034                   .dbline -2
+ 0034           L3:
+ 0034                   .dbline 0 ; func end
+ 0034 0C940000          xjmp _puts1
+ 0038                   .dbend
+ 0038                   .dbfunc e wifi_CIPMUX _wifi_CIPMUX fV
+                        .even
+ 0038           _wifi_CIPMUX::
+ 0038                   .dbline -1
+ 0038                   .dbline 39
+ 0038           ; }
+ 0038           ; 
+ 0038           ; //***********************************************************************
+ 0038           ; //    设置为单路连接模式
+ 0038           ; //***********************************************************************
+ 0038           ; void wifi_CIPMUX(void)
+ 0038           ; {
+ 0038                   .dbline 40
+ 0038           ;     sprintf(TxCharBuf_wifi, "AT+CIPMUX=0");
+ 0038 20E0              ldi R18,<L6
+ 003A 30E0              ldi R19,>L6
+ 003C 00E0              ldi R16,<_TxCharBuf_wifi
+ 003E 10E0              ldi R17,>_TxCharBuf_wifi
+ 0040 0E940000          xcall _sprintf
+ 0044                   .dbline 41
+ 0044           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 0044 00E0              ldi R16,<_TxCharBuf_wifi
+ 0046 10E0              ldi R17,>_TxCharBuf_wifi
+ 0048 0E940000          xcall _strlen
+ 004C 00930000          sts _TxStrLen_wifi,R16
+ 0050                   .dbline 42
+ 0050           ;       puts1();
+ 0050                   .dbline -2
+ 0050           L5:
+ 0050                   .dbline 0 ; func end
+ 0050 0C940000          xjmp _puts1
+ 0054                   .dbend
+ 0054                   .dbfunc e wifi_TCPConnect _wifi_TCPConnect fV
+                        .even
+ 0054           _wifi_TCPConnect::
+ 0054                   .dbline -1
+ 0054                   .dbline 49
+ 0054           ; }
+ 0054           ; 
+ 0054           ; //***********************************************************************
+ 0054           ; //    建立TCP连接
+ 0054           ; //***********************************************************************
+ 0054           ; void wifi_TCPConnect(void)
+ 0054           ; {
+ 0054                   .dbline 50
+ 0054           ;     sprintf(TxCharBuf_wifi, "TCP,alarm.icharm.me,80");
+ 0054 20E0              ldi R18,<L8
+ 0056 30E0              ldi R19,>L8
+ 0058 00E0              ldi R16,<_TxCharBuf_wifi
+ 005A 10E0              ldi R17,>_TxCharBuf_wifi
+ 005C 0E940000          xcall _sprintf
+ 0060                   .dbline 51
+ 0060           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 0060 00E0              ldi R16,<_TxCharBuf_wifi
+ 0062 10E0              ldi R17,>_TxCharBuf_wifi
+ 0064 0E940000          xcall _strlen
+ 0068 00930000          sts _TxStrLen_wifi,R16
+ 006C                   .dbline 52
+ 006C           ;       puts1();
+ 006C                   .dbline -2
+ 006C           L7:
+ 006C                   .dbline 0 ; func end
+ 006C 0C940000          xjmp _puts1
+ 0070                   .dbend
+ 0070                   .dbfunc e wifi_CIPMODE _wifi_CIPMODE fV
+                        .even
+ 0070           _wifi_CIPMODE::
+ 0070                   .dbline -1
+ 0070                   .dbline 59
+ 0070           ; }
+ 0070           ; 
+ 0070           ; //***********************************************************************
+ 0070           ; //    设置模块为透传模式
+ 0070           ; //***********************************************************************
+ 0070           ; void wifi_CIPMODE(void)
+ 0070           ; {
+ 0070                   .dbline 60
+ 0070           ;     sprintf(TxCharBuf_wifi, "AT+CIPMODE=1");
+ 0070 20E0              ldi R18,<L10
+ 0072 30E0              ldi R19,>L10
+ 0074 00E0              ldi R16,<_TxCharBuf_wifi
+ 0076 10E0              ldi R17,>_TxCharBuf_wifi
+ 0078 0E940000          xcall _sprintf
+ 007C                   .dbline 61
+ 007C           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 007C 00E0              ldi R16,<_TxCharBuf_wifi
+ 007E 10E0              ldi R17,>_TxCharBuf_wifi
+ 0080 0E940000          xcall _strlen
+ 0084 00930000          sts _TxStrLen_wifi,R16
+ 0088                   .dbline 62
+ 0088           ;       puts1();
+ 0088                   .dbline -2
+ 0088           L9:
+ 0088                   .dbline 0 ; func end
+ 0088 0C940000          xjmp _puts1
+ 008C                   .dbend
+ 008C                   .dbfunc e wifi_CIPSEND _wifi_CIPSEND fV
+                        .even
+ 008C           _wifi_CIPSEND::
+ 008C                   .dbline -1
+ 008C                   .dbline 69
+ 008C           ; }
+ 008C           ; 
+ 008C           ; //***********************************************************************
+ 008C           ; //    使用透传模式向服务器发送数据
+ 008C           ; //***********************************************************************
+ 008C           ; void wifi_CIPSEND(void)
+ 008C           ; {
+ 008C                   .dbline 70
+ 008C           ;     sprintf(TxCharBuf_wifi, "AT+CIPSEND");
+ 008C 20E0              ldi R18,<L12
+ 008E 30E0              ldi R19,>L12
+ 0090 00E0              ldi R16,<_TxCharBuf_wifi
+ 0092 10E0              ldi R17,>_TxCharBuf_wifi
+ 0094 0E940000          xcall _sprintf
+ 0098                   .dbline 71
+ 0098           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 0098 00E0              ldi R16,<_TxCharBuf_wifi
+ 009A 10E0              ldi R17,>_TxCharBuf_wifi
+ 009C 0E940000          xcall _strlen
+ 00A0 00930000          sts _TxStrLen_wifi,R16
+ 00A4                   .dbline 72
+ 00A4           ;       puts1();
+ 00A4                   .dbline -2
+ 00A4           L11:
+ 00A4                   .dbline 0 ; func end
+ 00A4 0C940000          xjmp _puts1
+ 00A8                   .dbend
+ 00A8                   .dbfunc e wifi_SendMsg _wifi_SendMsg fV
+                        .even
+ 00A8           _wifi_SendMsg::
+ 00A8                   .dbline -1
+ 00A8                   .dbline 80
+ 00A8           ; }
+ 00A8           ; 
+ 00A8           ; 
+ 00A8           ; //***********************************************************************
+ 00A8           ; //    发送短信
+ 00A8           ; //***********************************************************************
+ 00A8           ; void wifi_SendMsg(void)
+ 00A8           ; {
+ 00A8                   .dbline 81
+ 00A8           ;     sprintf(TxCharBuf_wifi, "GET http://alarm.icharm.me");
+ 00A8 20E0              ldi R18,<L14
+ 00AA 30E0              ldi R19,>L14
+ 00AC 00E0              ldi R16,<_TxCharBuf_wifi
+ 00AE 10E0              ldi R17,>_TxCharBuf_wifi
+ 00B0 0E940000          xcall _sprintf
+ 00B4                   .dbline 82
+ 00B4           ;     TxStrLen_wifi = strlen(TxCharBuf_wifi);
+ 00B4 00E0              ldi R16,<_TxCharBuf_wifi
+ 00B6 10E0              ldi R17,>_TxCharBuf_wifi
+ 00B8 0E940000          xcall _strlen
+ 00BC 00930000          sts _TxStrLen_wifi,R16
+ 00C0                   .dbline 83
+ 00C0           ;       puts1();
+ 00C0                   .dbline -2
+ 00C0           L13:
+ 00C0                   .dbline 0 ; func end
+ 00C0 0C940000          xjmp _puts1
+ 00C4                   .dbend
+ 00C4                   .dbfunc e wifi_SENDMSG _wifi_SENDMSG fV
+                        .even
+ 00C4           _wifi_SENDMSG::
+ 00C4                   .dbline -1
+ 00C4                   .dbline 90
+ 00C4           ; }
+ 00C4           ; 
+ 00C4           ; //***********************************************************************
+ 00C4           ; //    发送短信
+ 00C4           ; //***********************************************************************
+ 00C4           ; void wifi_SENDMSG(void)
+ 00C4           ; {
+ 00C4                   .dbline 91
+ 00C4           ;     wifi_TCPConnect();
+ 00C4 C7DF              xcall _wifi_TCPConnect
+ 00C6                   .dbline 92
+ 00C6           ;     delay_nms(200);
+ 00C6 08EC              ldi R16,200
+ 00C8 10E0              ldi R17,0
+ 00CA 0E940000          xcall _delay_nms
+ 00CE                   .dbline 93
+ 00CE           ;     wifi_CIPMODE();
+ 00CE D0DF              xcall _wifi_CIPMODE
+ 00D0                   .dbline 94
+ 00D0           ;     delay_nms(200);
+ 00D0 08EC              ldi R16,200
+ 00D2 10E0              ldi R17,0
+ 00D4 0E940000          xcall _delay_nms
+ 00D8                   .dbline 95
+ 00D8           ;     wifi_CIPSEND();
+ 00D8 D9DF              xcall _wifi_CIPSEND
+ 00DA                   .dbline 96
+ 00DA           ;     delay_nms(50);
+ 00DA 02E3              ldi R16,50
+ 00DC 10E0              ldi R17,0
+ 00DE 0E940000          xcall _delay_nms
+ 00E2                   .dbline 97
+ 00E2           ;     wifi_SendMsg();
+ 00E2                   .dbline -2
+ 00E2           L15:
+ 00E2                   .dbline 0 ; func end
+ 00E2 E2CF              xjmp _wifi_SendMsg
+ 00E4                   .dbend
+                        .area data(ram, con, rel)
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0000           L14:
+ 0000                   .blkb 27
+                        .area idata
+ 0000 47455420687474703A2F2F616C61726D  .byte 'G,'E,'T,32,'h,'t,'t,'p,58,47,47,'a,'l,'a,'r,'m
+ 0010 2E69636861726D2E6D6500    .byte 46,'i,'c,'h,'a,'r,'m,46,'m,'e,0
+                        .area data(ram, con, rel)
+ 001B                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 001B           L12:
+ 001B                   .blkb 11
+                        .area idata
+ 001B 41542B43495053454E4400    .byte 'A,'T,43,'C,'I,'P,'S,'E,'N,'D,0
+                        .area data(ram, con, rel)
+ 0026                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0026           L10:
+ 0026                   .blkb 13
+                        .area idata
+ 0026 41542B4349504D4F44453D3100        .byte 'A,'T,43,'C,'I,'P,'M,'O,'D,'E,61,49,0
+                        .area data(ram, con, rel)
+ 0033                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0033           L8:
+ 0033                   .blkb 23
+                        .area idata
+ 0033 5443502C616C61726D2E69636861726D  .byte 'T,'C,'P,44,'a,'l,'a,'r,'m,46,'i,'c,'h,'a,'r,'m
+ 0043 2E6D652C383000    .byte 46,'m,'e,44,56,48,0
+                        .area data(ram, con, rel)
+ 004A                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 004A           L6:
+ 004A                   .blkb 12
+                        .area idata
+ 004A 41542B4349504D55583D3000  .byte 'A,'T,43,'C,'I,'P,'M,'U,'X,61,48,0
+                        .area data(ram, con, rel)
+ 0056                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0056           L4:
+ 0056                   .blkb 28
+                        .area idata
+ 0056 41542B43574A41503D49434841524D2C  .byte 'A,'T,43,'C,'W,'J,'A,'P,61,'I,'C,'H,'A,'R,'M,44
+ 0066 6D656979616E6C69616E6700  .byte 'm,'e,'i,'y,'a,'n,'l,'i,'a,'n,'g,0
+                        .area data(ram, con, rel)
+ 0072                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0072           L2:
+ 0072                   .blkb 7
+                        .area idata
+ 0072 41542B52535400    .byte 'A,'T,43,'R,'S,'T,0
+                        .area data(ram, con, rel)
+ 0079                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0079           ; }

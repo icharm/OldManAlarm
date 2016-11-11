@@ -1,0 +1,416 @@
+                        .module USART.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile USART.c
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\USART.c
+ 0000                   .dbfunc e UART0_Init _UART0_Init fV
+                        .even
+ 0000           _UART0_Init::
+ 0000                   .dbline -1
+ 0000                   .dbline 25
+ 0000           ; #include <iom128v.h>
+ 0000           ; #include "basic.h"
+ 0000           ; #include "USART.h"
+ 0000           ; 
+ 0000           ; 
+ 0000           ; //发送字符数组 
+ 0000           ; uchar TxCharBuf[128];
+ 0000           ; uchar TxCharNum, TxStrLen;
+ 0000           ; //接收字符数组
+ 0000           ; uchar RxCharBuf[16];
+ 0000           ; uchar RxCharNum, RxBufWr, RxBufRd;
+ 0000           ; 
+ 0000           ; //发送字符数组
+ 0000           ; uchar TxCharBuf_wifi[128];
+ 0000           ; uchar TxCharNum_wifi, TxStrLen_wifi;
+ 0000           ; //接收字符数组
+ 0000           ; uchar RxCharBuf_wifi[16];
+ 0000           ; uchar RxCharNum_wifi, RxBufWr_wifi, RxBufRd_wifi;
+ 0000           ; 
+ 0000           ; //***********************************************************************
+ 0000           ; // 串口0初始化接口函数
+ 0000           ; // 初始化uart,查询方式读写
+ 0000           ; //***********************************************************************
+ 0000           ; void UART0_Init(void)
+ 0000           ; {
+ 0000                   .dbline 26
+ 0000           ;     UCSR0B = 0x00;    //disable while setting baud rate
+ 0000 2224              clr R2
+ 0002 2AB8              out 0xa,R2
+ 0004                   .dbline 27
+ 0004           ;     UCSR0C = 0x06;
+ 0004 86E0              ldi R24,6
+ 0006 80939500          sts 149,R24
+ 000A                   .dbline 28
+ 000A           ;       UCSR0A = 0x00;
+ 000A 2BB8              out 0xb,R2
+ 000C                   .dbline 29
+ 000C           ;     UBRR0H = baud_h;  //写波特率的值
+ 000C 20929000          sts 144,R2
+ 0010                   .dbline 30
+ 0010           ;     UBRR0L = baud_l;
+ 0010 83E0              ldi R24,3
+ 0012 89B9              out 0x9,R24
+ 0014                   .dbline 31
+ 0014           ;     UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0); //发送接收使能、接收结束中断使能
+ 0014 88E9              ldi R24,152
+ 0016 8AB9              out 0xa,R24
+ 0018                   .dbline 33
+ 0018           ; 
+ 0018           ;       RxBufWr = 0;
+ 0018 20929600          sts _RxBufWr,R2
+ 001C                   .dbline 34
+ 001C           ;       RxBufRd = 0;    
+ 001C 20929500          sts _RxBufRd,R2
+ 0020                   .dbline -2
+ 0020           L1:
+ 0020                   .dbline 0 ; func end
+ 0020 0895              ret
+ 0022                   .dbend
+ 0022                   .dbfunc e puts0 _puts0 fV
+                        .even
+ 0022           _puts0::
+ 0022                   .dbline -1
+ 0022                   .dbline 41
+ 0022           ; }
+ 0022           ;       
+ 0022           ; //***********************************************************************
+ 0022           ; // USART0发送字符串数据
+ 0022           ; //***********************************************************************
+ 0022           ; void puts0(void)
+ 0022           ; {
+ 0022                   .dbline 42
+ 0022           ;     for(TxCharNum = 0; TxCharNum < TxStrLen; TxCharNum++){
+ 0022 2224              clr R2
+ 0024 2092A900          sts _TxCharNum,R2
+ 0028 11C0              xjmp L6
+ 002A           L3:
+ 002A                   .dbline 42
+ 002A                   .dbline 43
+ 002A           ;         UDR0 = TxCharBuf[TxCharNum];
+ 002A 80E0              ldi R24,<_TxCharBuf
+ 002C 90E0              ldi R25,>_TxCharBuf
+ 002E E091A900          lds R30,_TxCharNum
+ 0032 FF27              clr R31
+ 0034 E80F              add R30,R24
+ 0036 F91F              adc R31,R25
+ 0038 2080              ldd R2,z+0
+ 003A 2CB8              out 0xc,R2
+ 003C           L7:
+ 003C                   .dbline 44
+ 003C           ;         while(!(UCSR0A & (1 << TXC0))) ;
+ 003C           L8:
+ 003C                   .dbline 44
+ 003C 5E9B              sbis 0xb,6
+ 003E FECF              rjmp L7
+ 0040           X0:
+ 0040                   .dbline 45
+ 0040           ;         UCSR0A |= (1 << TXC0);
+ 0040 5E9A              sbi 0xb,6
+ 0042                   .dbline 46
+ 0042           ;     }
+ 0042           L4:
+ 0042                   .dbline 42
+ 0042 8091A900          lds R24,_TxCharNum
+ 0046 8F5F              subi R24,255    ; addi 1
+ 0048 8093A900          sts _TxCharNum,R24
+ 004C           L6:
+ 004C                   .dbline 42
+ 004C 2090A800          lds R2,_TxStrLen
+ 0050 3090A900          lds R3,_TxCharNum
+ 0054 3214              cp R3,R2
+ 0056 48F3              brlo L3
+ 0058           X1:
+ 0058                   .dbline -2
+ 0058           L2:
+ 0058                   .dbline 0 ; func end
+ 0058 0895              ret
+ 005A                   .dbend
+                        .area vector(rom, abs)
+                        .org 72
+ 0048 0C942D00          jmp _uart0_rx_isr
+                        .area text(rom, con, rel)
+ 005A                   .dbfile E:\git\AVR\OldManAlarm\USART.c
+ 005A                   .dbfunc e uart0_rx_isr _uart0_rx_isr fV
+                        .even
+ 005A           _uart0_rx_isr::
+ 005A 2A92              st -y,R2
+ 005C 8A93              st -y,R24
+ 005E 9A93              st -y,R25
+ 0060 EA93              st -y,R30
+ 0062 FA93              st -y,R31
+ 0064 2FB6              IN R2,63
+ 0066 2A92              st -y,R2
+ 0068                   .dbline -1
+ 0068                   .dbline 57
+ 0068           ;     //UDR0 = 0x0d;
+ 0068           ;     //while(!(UCSR0A & (1 << TXC0))) ;
+ 0068           ;     //UCSR0A |= (1 << TXC0);
+ 0068           ; }
+ 0068           ; 
+ 0068           ; //***********************************************************************
+ 0068           ; // USART0中断接收字符串
+ 0068           ; //***********************************************************************
+ 0068           ; #pragma interrupt_handler uart0_rx_isr:iv_USART0_RXC
+ 0068           ; void uart0_rx_isr(void)
+ 0068           ; {
+ 0068                   .dbline 58
+ 0068           ;     RxCharBuf[RxBufWr] = UDR0;  //从数据缓冲器中接收数据
+ 0068 80E0              ldi R24,<_RxCharBuf
+ 006A 90E0              ldi R25,>_RxCharBuf
+ 006C E0919600          lds R30,_RxBufWr
+ 0070 FF27              clr R31
+ 0072 E80F              add R30,R24
+ 0074 F91F              adc R31,R25
+ 0076 2CB0              in R2,0xc
+ 0078 2082              std z+0,R2
+ 007A                   .dbline 59
+ 007A           ;       RxBufWr++;
+ 007A 80919600          lds R24,_RxBufWr
+ 007E 8F5F              subi R24,255    ; addi 1
+ 0080 80939600          sts _RxBufWr,R24
+ 0084                   .dbline 60
+ 0084           ;       RxBufWr &= 0x0f;            //16->0
+ 0084 8F70              andi R24,15
+ 0086 80939600          sts _RxBufWr,R24
+ 008A                   .dbline -2
+ 008A           L10:
+ 008A                   .dbline 0 ; func end
+ 008A 2990              ld R2,y+
+ 008C 2FBE              OUT 63,R2
+ 008E F991              ld R31,y+
+ 0090 E991              ld R30,y+
+ 0092 9991              ld R25,y+
+ 0094 8991              ld R24,y+
+ 0096 2990              ld R2,y+
+ 0098 1895              reti
+ 009A                   .dbend
+ 009A                   .dbfunc e UART1_Init _UART1_Init fV
+                        .even
+ 009A           _UART1_Init::
+ 009A                   .dbline -1
+ 009A                   .dbline 70
+ 009A           ; }
+ 009A           ; 
+ 009A           ; 
+ 009A           ; //************************************************************UART1 WIFI_ESP8266*********************************************************************
+ 009A           ; //***************************************************************************************************************************************************
+ 009A           ; // 串口1初始化接口函数
+ 009A           ; // 初始化uart,查询方式读写
+ 009A           ; //***********************************************************************
+ 009A           ; void UART1_Init(void)
+ 009A           ; {
+ 009A                   .dbline 71
+ 009A           ;     UCSR1B = 0x00;    //disable while setting baud rate
+ 009A 2224              clr R2
+ 009C 20929A00          sts 154,R2
+ 00A0                   .dbline 72
+ 00A0           ;     UCSR1C = 0x06;
+ 00A0 86E0              ldi R24,6
+ 00A2 80939D00          sts 157,R24
+ 00A6                   .dbline 73
+ 00A6           ;       UCSR1A = 0x00;
+ 00A6 20929B00          sts 155,R2
+ 00AA                   .dbline 74
+ 00AA           ;     UBRR1H = baud_h;  //写波特率的值
+ 00AA 20929800          sts 152,R2
+ 00AE                   .dbline 75
+ 00AE           ;     UBRR1L = baud_l;
+ 00AE 83E0              ldi R24,3
+ 00B0 80939900          sts 153,R24
+ 00B4                   .dbline 76
+ 00B4           ;     UCSR1B = (1 << RXEN1) | (1 << TXEN1) | (1 << RXCIE1); //发送接收使能、接收结束中断使能
+ 00B4 88E9              ldi R24,152
+ 00B6 80939A00          sts 154,R24
+ 00BA                   .dbline 78
+ 00BA           ; 
+ 00BA           ;       RxBufWr_wifi = 0;
+ 00BA 20920100          sts _RxBufWr_wifi,R2
+ 00BE                   .dbline 79
+ 00BE           ;       RxBufRd_wifi = 0;       
+ 00BE 20920000          sts _RxBufRd_wifi,R2
+ 00C2                   .dbline -2
+ 00C2           L11:
+ 00C2                   .dbline 0 ; func end
+ 00C2 0895              ret
+ 00C4                   .dbend
+ 00C4                   .dbfunc e puts1 _puts1 fV
+                        .even
+ 00C4           _puts1::
+ 00C4                   .dbline -1
+ 00C4                   .dbline 86
+ 00C4           ; }
+ 00C4           ;       
+ 00C4           ; //***********************************************************************
+ 00C4           ; // USART1发送字符串数据
+ 00C4           ; //***********************************************************************
+ 00C4           ; void puts1(void)
+ 00C4           ; {
+ 00C4                   .dbline 87
+ 00C4           ;     for(TxCharNum_wifi = 0; TxCharNum_wifi < TxStrLen_wifi; TxCharNum_wifi++){
+ 00C4 2224              clr R2
+ 00C6 20921400          sts _TxCharNum_wifi,R2
+ 00CA 18C0              xjmp L16
+ 00CC           L13:
+ 00CC                   .dbline 87
+ 00CC                   .dbline 88
+ 00CC           ;         UDR1 = TxCharBuf_wifi[TxCharNum_wifi];
+ 00CC 80E0              ldi R24,<_TxCharBuf_wifi
+ 00CE 90E0              ldi R25,>_TxCharBuf_wifi
+ 00D0 E0911400          lds R30,_TxCharNum_wifi
+ 00D4 FF27              clr R31
+ 00D6 E80F              add R30,R24
+ 00D8 F91F              adc R31,R25
+ 00DA 2080              ldd R2,z+0
+ 00DC 20929C00          sts 156,R2
+ 00E0           L17:
+ 00E0                   .dbline 89
+ 00E0           ;         while(!(UCSR1A & (1 << TXC1))) ;   //等待发送完成
+ 00E0           L18:
+ 00E0                   .dbline 89
+ 00E0 20909B00          lds R2,155
+ 00E4 26FE              sbrs R2,6
+ 00E6 FCCF              rjmp L17
+ 00E8           X2:
+ 00E8                   .dbline 90
+ 00E8           ;         UCSR1A |= (1 << TXC1);             //发送完成标志置位
+ 00E8 80919B00          lds R24,155
+ 00EC 8064              ori R24,64
+ 00EE 80939B00          sts 155,R24
+ 00F2                   .dbline 91
+ 00F2           ;     }
+ 00F2           L14:
+ 00F2                   .dbline 87
+ 00F2 80911400          lds R24,_TxCharNum_wifi
+ 00F6 8F5F              subi R24,255    ; addi 1
+ 00F8 80931400          sts _TxCharNum_wifi,R24
+ 00FC           L16:
+ 00FC                   .dbline 87
+ 00FC 20901300          lds R2,_TxStrLen_wifi
+ 0100 30901400          lds R3,_TxCharNum_wifi
+ 0104 3214              cp R3,R2
+ 0106 10F3              brlo L13
+ 0108           X3:
+ 0108                   .dbline 92
+ 0108           ;     UDR1 = 0x0d;
+ 0108 8DE0              ldi R24,13
+ 010A 80939C00          sts 156,R24
+ 010E           L20:
+ 010E                   .dbline 93
+ 010E           ;     while(!(UCSR1A & (1 << TXC1))) ;
+ 010E           L21:
+ 010E                   .dbline 93
+ 010E 20909B00          lds R2,155
+ 0112 26FE              sbrs R2,6
+ 0114 FCCF              rjmp L20
+ 0116           X4:
+ 0116                   .dbline 94
+ 0116           ;     UCSR1A |= (1 << TXC1);
+ 0116 80919B00          lds R24,155
+ 011A 8064              ori R24,64
+ 011C 80939B00          sts 155,R24
+ 0120                   .dbline -2
+ 0120           L12:
+ 0120                   .dbline 0 ; func end
+ 0120 0895              ret
+ 0122                   .dbend
+                        .area vector(rom, abs)
+                        .org 120
+ 0078 0C949100          jmp _uart1_rx_isr
+                        .area text(rom, con, rel)
+ 0122                   .dbfile E:\git\AVR\OldManAlarm\USART.c
+ 0122                   .dbfunc e uart1_rx_isr _uart1_rx_isr fV
+                        .even
+ 0122           _uart1_rx_isr::
+ 0122 2A92              st -y,R2
+ 0124 8A93              st -y,R24
+ 0126 9A93              st -y,R25
+ 0128 EA93              st -y,R30
+ 012A FA93              st -y,R31
+ 012C 2FB6              IN R2,63
+ 012E 2A92              st -y,R2
+ 0130                   .dbline -1
+ 0130                   .dbline 102
+ 0130           ; }
+ 0130           ; 
+ 0130           ; //***********************************************************************
+ 0130           ; // USART1中断接收字符串
+ 0130           ; //***********************************************************************
+ 0130           ; #pragma interrupt_handler uart1_rx_isr:iv_USART1_RXC
+ 0130           ; void uart1_rx_isr(void)
+ 0130           ; {
+ 0130                   .dbline 103
+ 0130           ;     RxCharBuf_wifi[RxBufWr_wifi] = UDR1;  //从数据缓冲器中接收数据
+ 0130 80E0              ldi R24,<_RxCharBuf_wifi
+ 0132 90E0              ldi R25,>_RxCharBuf_wifi
+ 0134 E0910100          lds R30,_RxBufWr_wifi
+ 0138 FF27              clr R31
+ 013A E80F              add R30,R24
+ 013C F91F              adc R31,R25
+ 013E 20909C00          lds R2,156
+ 0142 2082              std z+0,R2
+ 0144                   .dbline 104
+ 0144           ;       RxBufWr_wifi++;
+ 0144 80910100          lds R24,_RxBufWr_wifi
+ 0148 8F5F              subi R24,255    ; addi 1
+ 014A 80930100          sts _RxBufWr_wifi,R24
+ 014E                   .dbline 105
+ 014E           ;       RxBufWr_wifi &= 0x0f;            //16->0
+ 014E 8F70              andi R24,15
+ 0150 80930100          sts _RxBufWr_wifi,R24
+ 0154                   .dbline -2
+ 0154           L23:
+ 0154                   .dbline 0 ; func end
+ 0154 2990              ld R2,y+
+ 0156 2FBE              OUT 63,R2
+ 0158 F991              ld R31,y+
+ 015A E991              ld R30,y+
+ 015C 9991              ld R25,y+
+ 015E 8991              ld R24,y+
+ 0160 2990              ld R2,y+
+ 0162 1895              reti
+ 0164                   .dbend
+                        .area bss(ram, con, rel)
+ 0000                   .dbfile E:\git\AVR\OldManAlarm\USART.c
+ 0000           _RxBufRd_wifi::
+ 0000                   .blkb 1
+ 0001                   .dbsym e RxBufRd_wifi _RxBufRd_wifi c
+ 0001           _RxBufWr_wifi::
+ 0001                   .blkb 1
+ 0002                   .dbsym e RxBufWr_wifi _RxBufWr_wifi c
+ 0002           _RxCharNum_wifi::
+ 0002                   .blkb 1
+ 0003                   .dbsym e RxCharNum_wifi _RxCharNum_wifi c
+ 0003           _RxCharBuf_wifi::
+ 0003                   .blkb 16
+ 0013                   .dbsym e RxCharBuf_wifi _RxCharBuf_wifi A[16:16]c
+ 0013           _TxStrLen_wifi::
+ 0013                   .blkb 1
+ 0014                   .dbsym e TxStrLen_wifi _TxStrLen_wifi c
+ 0014           _TxCharNum_wifi::
+ 0014                   .blkb 1
+ 0015                   .dbsym e TxCharNum_wifi _TxCharNum_wifi c
+ 0015           _TxCharBuf_wifi::
+ 0015                   .blkb 128
+ 0095                   .dbsym e TxCharBuf_wifi _TxCharBuf_wifi A[128:128]c
+ 0095           _RxBufRd::
+ 0095                   .blkb 1
+ 0096                   .dbsym e RxBufRd _RxBufRd c
+ 0096           _RxBufWr::
+ 0096                   .blkb 1
+ 0097                   .dbsym e RxBufWr _RxBufWr c
+ 0097           _RxCharNum::
+ 0097                   .blkb 1
+ 0098                   .dbsym e RxCharNum _RxCharNum c
+ 0098           _RxCharBuf::
+ 0098                   .blkb 16
+ 00A8                   .dbsym e RxCharBuf _RxCharBuf A[16:16]c
+ 00A8           _TxStrLen::
+ 00A8                   .blkb 1
+ 00A9                   .dbsym e TxStrLen _TxStrLen c
+ 00A9           _TxCharNum::
+ 00A9                   .blkb 1
+ 00AA                   .dbsym e TxCharNum _TxCharNum c
+ 00AA           _TxCharBuf::
+ 00AA                   .blkb 128
+ 012A                   .dbsym e TxCharBuf _TxCharBuf A[128:128]c
+ 012A           ; }

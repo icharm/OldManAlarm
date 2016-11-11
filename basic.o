@@ -1,0 +1,136 @@
+XL
+H 1 areas 8 global symbols
+M basic.c
+A text size 94 flags 0
+dbfile basic.c
+dbfile E:\git\AVR\OldManAlarm\basic.c
+dbfunc e delay_1us 0 fV
+dbline FFFFFFFF 0
+dbline 3 0
+dbline 4 0
+dbline 5 2
+dbline 6 4
+dbline 7 6
+dbline 8 8
+dbline 9 A
+dbline FFFFFFFE C
+dbline 0 C
+dbfunc e delay_3us E fV
+dbline FFFFFFFF E
+dbline E E
+dbline 10 E
+dbline 11 10
+dbline 12 12
+dbline 13 14
+dbline 14 16
+dbline 15 18
+dbline 16 1A
+dbline 17 1C
+dbline 18 1E
+dbline 19 20
+dbline 1A 22
+dbline 1B 24
+dbline 1C 26
+dbline 1D 28
+dbline 1E 2A
+dbline 1F 2C
+dbline 20 2E
+dbline 21 30
+dbline 22 32
+dbline 23 34
+dbline 24 36
+dbline FFFFFFFE 38
+dbline 0 38
+dbfunc e delay_10us 3A fV
+dbline FFFFFFFF 3A
+dbline 28 3A
+dbline 29 3A
+dbline 2A 3C
+dbline 2B 3E
+dbline FFFFFFFE 3E
+dbline 0 3E
+dbfunc e delay_50us 40 fV
+dbline FFFFFFFF 40
+dbline 2F 40
+dbline 30 40
+dbline 31 42
+dbline 32 44
+dbline 33 46
+dbline FFFFFFFE 46
+dbline 0 46
+dbfunc e delay_100us 48 fV
+dbline FFFFFFFF 48
+dbline 36 48
+dbline 37 48
+dbline 38 4A
+dbline FFFFFFFE 4A
+dbline 0 4A
+dbfunc e delay_n100us 4C fV
+dbsym r n100us 14 c
+dbline FFFFFFFF 50
+dbline 3C 50
+dbline 3E 52
+dbline 3D 54
+dbline FFFFFFFE 5E
+dbline 0 5E
+dbfunc e delay_1ms 62 fV
+dbline FFFFFFFF 62
+dbline 43 62
+dbline 44 62
+dbline 45 64
+dbline 46 66
+dbline 47 68
+dbline 48 6A
+dbline 49 6C
+dbline 4A 6E
+dbline 4B 70
+dbline 4C 72
+dbline 4D 74
+dbline FFFFFFFE 74
+dbline 0 74
+dbfunc e delay_nms 76 fV
+dbsym r nms 14 i
+dbline FFFFFFFF 7C
+dbline 51 7C
+dbline 53 7E
+dbline 52 80
+dbline FFFFFFFE 8E
+dbline 0 8E
+S _delay_10us Def003A
+S _delay_50us Def0040
+S _delay_nms Def0076
+S _delay_100us Def0048
+S _delay_n100us Def004C
+S _delay_1ms Def0062
+S _delay_1us Def0000
+S _delay_3us Def000E
+T 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 95
+R 00 00 00 00
+T 0E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+R 00 00 00 00
+T 1C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+R 00 00 00 00
+T 2A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+R 00 00 00 00
+T 38 00 08 95
+R 00 00 00 00
+T 3A 00 E9 DF E8 DF E7 CF
+R 00 00 00 00
+T 40 00 FC DF FB DF FA DF F9 CF
+R 00 00 00 00
+T 48 00 FB DF FA CF
+R 00 00 00 00
+T 4C 00 4A 93 40 2F 01 C0 FA DF 24 2E 33 24 41 50
+R 00 00 00 00
+T 5A 00 22 20 D1 F7 49 91 08 95
+R 00 00 00 00
+T 62 00 F2 DF F1 DF F0 DF EF DF EE DF ED DF EC DF
+R 00 00 00 00
+T 70 00 EB DF EA DF E9 CF
+R 00 00 00 00
+T 76 00 4A 93 5A 93 A8 01 01 C0 F1 DF 1A 01 41 50
+R 00 00 00 00
+T 84 00 50 40 22 20 D1 F7 33 20 C1 F7 59 91 49 91
+R 00 00 00 00
+T 92 00 08 95
+R 00 00 00 00

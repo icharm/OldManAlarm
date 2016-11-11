@@ -1,0 +1,99 @@
+#include <iom128v.h>
+#include "basic.h"
+#include "USART.h"
+
+
+//发送字符数组 
+uchar TxCharBuf[128];
+uchar TxCharNum, TxStrLen;
+//接收字符数组
+uchar RxCharBuf[16];
+uchar RxCharNum, RxBufWr, RxBufRd;
+
+//***********************************************************************
+// 串口0初始化接口函数
+// 初始化uart,查询方式读写
+//***********************************************************************
+void UART0_Init(void)
+{
+    UCSR0B = 0x00;    //disable while setting baud rate
+    UCSR0C = 0x06;
+	UCSR0A = 0x00;
+    UBRR0H = baud_h;  //写波特率的值
+    UBRR0L = baud_l;
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0); //发送接收使能、接收结束中断使能
+
+	RxBufWr = 0;
+	RxBufRd = 0;	
+}
+	
+//***********************************************************************
+// USART0发送字符串数据
+//***********************************************************************
+void puts0(void)
+{
+    for(TxCharNum = 0; TxCharNum < TxStrLen; TxCharNum++){
+        UDR0 = TxCharBuf[TxCharNum];
+        while(!(UCSR0A & (1 << TXC0))) ;
+        UCSR0A |= (1 << TXC0);
+    }
+    UDR0 = 0x0d;
+    while(!(UCSR0A & (1 << TXC0))) ;
+    UCSR0A |= (1 << TXC0);
+}
+
+//***********************************************************************
+// USART0中断接收字符串
+//***********************************************************************
+#pragma interrupt_handler uart0_rx_isr:iv_USART0_RXC
+void uart0_rx_isr(void)
+{
+    RxCharBuf[RxBufWr] = UDR0;  //从数据缓冲器中接收数据
+	RxBufWr++;
+ 	RxBufWr &= 0x0f;            //16->0
+}
+
+
+//************************************************************UART1 WIFI_ESP8266*********************************************************************
+//***************************************************************************************************************************************************
+// 串口1初始化接口函数
+// 初始化uart,查询方式读写
+//***********************************************************************
+void UART1_Init(void)
+{
+    UCSR1B = 0x00;    //disable while setting baud rate
+    UCSR1C = 0x06;
+	UCSR1A = 0x00;
+    UBRR1H = baud_h;  //写波特率的值
+    UBRR1L = baud_l;
+    UCSR1B = (1 << RXEN1) | (1 << TXEN1) | (1 << RXCIE1); //发送接收使能、接收结束中断使能
+
+	RxBufWr = 0;
+	RxBufRd = 0;	
+}
+	
+//***********************************************************************
+// USART0发送字符串数据
+//***********************************************************************
+void puts1(void)
+{
+    for(TxCharNum = 0; TxCharNum < TxStrLen; TxCharNum++){
+        UDR0 = TxCharBuf[TxCharNum];
+        while(!(UCSR0A & (1 << TXC0))) ;   //等待发送完成
+        UCSR0A |= (1 << TXC0);             //发送完成标志置位
+    }
+    UDR0 = 0x0d;
+    while(!(UCSR0A & (1 << TXC0))) ;
+    UCSR0A |= (1 << TXC0);
+}
+
+//***********************************************************************
+// USART0中断接收字符串
+//***********************************************************************
+#pragma interrupt_handler uart1_rx_isr:iv_USART1_RXC
+void uart1_rx_isr(void)
+{
+    RxCharBuf[RxBufWr] = UDR0;  //从数据缓冲器中接收数据
+	RxBufWr++;
+ 	RxBufWr &= 0x0f;            //16->0
+}

@@ -1,0 +1,100 @@
+//DMAVR-128开发板12864型液晶显示实时时钟驱动程序
+//编译环境 编译环境 ICCAVR 7.16A
+//系统时钟7.3728MHZ，设置熔丝位为外部高频石英晶体振荡，启动时间4.1ms
+//作者：阿迪 www.avrgcc.com
+//日期：2010.12.112
+
+//***********************************************************************
+//			包含文件
+//***********************************************************************
+
+#include <string.h>
+#include <stdio.h>
+#include <AVRdef.h>
+#include <iom128v.h>
+#include "DS18B20.h"    //温度传感器
+#include "basic.h"      //基础函数
+#include "12864time.h"  //DS1302时钟
+#include "LCD.h"        //12864LCD显示屏
+#include "USART.h"
+
+extern uchar RxCharBuf[16];
+extern uchar RxCharNum, RxBufWr, RxBufRd;
+extern uchar TxCharBuf[128];
+extern uchar TxCharNum,TxStrLen;
+
+ 
+//****************************************************************
+//  显示欢迎信息
+//****************************************************************
+void welcomeDisplay(void)
+{
+ 	DisplayCgrom(0x90,"欢迎使用独居老人");
+	delay_nms(100);
+	DisplayCgrom(0x8a,"预警系统");
+	delay_nms(3000);
+	LCD_clear();                                  //清屏
+}
+
+//call this routine to initialize all peripherals
+void init_devices(void)
+{
+    //stop errant interrupts until set up
+    CLI(); //disable all interrupts
+    XDIV  = 0x00; //xtal divider
+    XMCRA = 0x00; //external memory
+    UART0_Init();
+
+    MCUCR = 0x00;
+    EICRA = 0x00; //extended ext ints
+    EICRB = 0x00; //extended ext ints
+    EIMSK = 0x00;
+    TIMSK = 0x00; //timer interrupt sources
+    ETIMSK = 0x00; //extended timer interrupt sources
+    SEI(); //re-enable interrupts
+    //all peripherals are now initialized
+}
+
+//***********************************************************************
+//			主程序
+//***********************************************************************
+void main(void)
+{
+    // volatile unsigned char temp;
+	uchar u8temp;   
+
+    system_init();                                //系统初始化，设置IO口属性
+	delay_nms(100);                                //延时100ms
+	LCD_init();                                   //液晶参数初始化设置
+	LCD_clear();                                  //清屏
+    
+	ds1302_init();                                //DS1302初始化
+	DS18B20_Reset();			        		  //复位D18B20
+	delay_nms(10);
+	//ds1302_write_time();                          //向DS1302写初始数据，如年月和时间等
+	welcomeDisplay();
+	//SREG |= 0x80;	 					r			//开启全局中断
+	init_devices();
+	
+    while(1) { 
+
+		displayDateTime();
+		LCD_write_temperature();
+
+        sprintf(TxCharBuf, "abcdefghi");
+        TxStrLen = strlen(TxCharBuf);
+	    puts0();
+        LCD_write_com(0x98);
+        delay_nms(2);
+        while(RxBufWr != RxBufRd) {
+            u8temp = RxCharBuf[RxBufRd];
+            RxBufRd++;
+            RxBufRd &= 0x0f;
+            if(u8temp == 0x0d) break;
+            LCD_write_data(u8temp);
+            delay_nms(2);
+            //DisplayCgrom(0x98, &u8temp);
+        }
+	}
+}
+

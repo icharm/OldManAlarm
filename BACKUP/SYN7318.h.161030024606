@@ -1,0 +1,23 @@
+#define playvoice 0x01;
+#define setvoicelevel 0x05;
+#define startidentifyvoice 0x10;
+#define stopidentifyvoice 0x11;
+#define threetooneidentify 0x15;
+#define setvoiceidentyparam 0x1E;
+#define setwordsupdate 0x1F;
+#define startvoiceawake 0x51;
+#define stopvoiceawake 0x52;
+#define setuserdefinedaeaakename 0x53;
+#define inquirystate 0x21;
+
+/*复位脚 PC7*/
+#define RST_SYN_CLR	PORTE &= ~(1 << PC7)              //电平置低
+#define RST_SYN_SET	PORTE |= (1 << PC7)               //电平置高
+#define RST_SYN_IN	DDRE &= ~(1 << PC7)               //方向输入
+#define RST_SYN_OUT	DDRE |= (1 << PC7)                //方向输出
+/*开关脚 PC6*/
+#define SRT_SYN_CLR	PORTE &= ~(1 << PC6)              //电平置低
+#define SRT_SYN_SET	PORTE |= (1 << PC6)               //电平置高
+#define SRT_SYN_IN	DDRE &= ~(1 << PC6)               //方向输入
+#define SRT_SYN_OUT	DDRE |= (1 << PC6)                //方向输出
+
