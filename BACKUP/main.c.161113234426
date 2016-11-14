@@ -86,7 +86,6 @@ void main(void)
     uchar command;
     uchar temp;
 	uchar timestr[21];								//时间字符串数组
-	uchar tempstr[7];								//温度字符串数组
 
     system_init();                                //系统初始化，设置IO口属性
 	delay_nms(100);                                //延时100ms
@@ -167,13 +166,11 @@ void main(void)
             case 100 :
                 DisplayCgrom(0x8C,"温度");
                 delay_nms(2);
-				strcpy((char*)tempstr,(char*)Temperaturetostr());
-				voicePlayer(tempstr);
                 break;
 			case 101:
 				DisplayCgrom(0x8C,"时间");
 				delay_nms(2);
-				strcpy((char*)timestr,(char*)Timetostr());
+				timestr=Timetostr();
 				voicePlayer(timestr);
 				break;
             default :

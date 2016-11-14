@@ -1,7 +1,7 @@
                         .module main.c
                         .area text(rom, con, rel)
  0000                   .dbfile main.c
- 0000                   .dbfile E:\git\AVR\OldManAlarm\main.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
  0000                   .dbfunc e welcomeDisplay _welcomeDisplay fV
                         .even
  0000           _welcomeDisplay::
@@ -170,471 +170,533 @@
  0072 0895              ret
  0074                   .dbend
  0074                   .dbfunc e main _main fV
+ 0074           ;        tempstr -> y+21
+ 0074           ;        timestr -> y+0
  0074           ;           temp -> R20
  0074           ;        command -> R10
  0074           ;         u8temp -> R20
                         .even
  0074           _main::
- 0074                   .dbline -1
- 0074                   .dbline 83
- 0074           ;     //all peripherals are now initialized
- 0074           ; }
- 0074           ; 
- 0074           ; //***********************************************************************
- 0074           ; //                    主程序
- 0074           ; //***********************************************************************
- 0074           ; void main(void)
- 0074           ; {
- 0074                   .dbline 89
- 0074           ;     // volatile unsigned char temp;
- 0074           ;       uchar u8temp;
- 0074           ;     uchar command;
- 0074           ;     uchar temp;   
- 0074           ; 
- 0074           ;     system_init();                                //系统初始化，设置IO口属性
- 0074 0E940000          xcall _system_init
- 0078                   .dbline 90
- 0078           ;       delay_nms(100);                                //延时100ms
- 0078 04E6              ldi R16,100
- 007A 10E0              ldi R17,0
- 007C 0E940000          xcall _delay_nms
- 0080                   .dbline 91
- 0080           ;       LCD_init();                                   //液晶参数初始化设置
- 0080 0E940000          xcall _LCD_init
- 0084                   .dbline 92
- 0084           ;       LCD_clear();                                  //清屏
- 0084 0E940000          xcall _LCD_clear
- 0088                   .dbline 94
- 0088           ;     
- 0088           ;       ds1302_init();                                //DS1302初始化
- 0088 0E940000          xcall _ds1302_init
- 008C                   .dbline 95
- 008C           ;       DS18B20_Reset();                                                  //复位D18B20
- 008C 0E940000          xcall _DS18B20_Reset
- 0090                   .dbline 96
- 0090           ;       delay_nms(10);
- 0090 0AE0              ldi R16,10
- 0092 10E0              ldi R17,0
- 0094 0E940000          xcall _delay_nms
- 0098                   .dbline 98
- 0098           ;       //ds1302_write_time();                        //向DS1302写初始数据，如年月和时间等
- 0098           ;       welcomeDisplay();
- 0098 B3DF              xcall _welcomeDisplay
- 009A                   .dbline 99
- 009A           ;       init_devices(); 
- 009A DADF              xcall _init_devices
+ 0074 6C97              sbiw R28,28
+ 0076                   .dbline -1
+ 0076                   .dbline 83
+ 0076           ;     //all peripherals are now initialized
+ 0076           ; }
+ 0076           ; 
+ 0076           ; //***********************************************************************
+ 0076           ; //                    主程序
+ 0076           ; //***********************************************************************
+ 0076           ; void main(void)
+ 0076           ; {
+ 0076                   .dbline 91
+ 0076           ;     // volatile unsigned char temp;
+ 0076           ;       uchar u8temp;
+ 0076           ;     uchar command;
+ 0076           ;     uchar temp;
+ 0076           ;       uchar timestr[21];                                                              //时间字符串数组
+ 0076           ;       uchar tempstr[7];                                                               //温度字符串数组
+ 0076           ; 
+ 0076           ;     system_init();                                //系统初始化，设置IO口属性
+ 0076 0E940000          xcall _system_init
+ 007A                   .dbline 92
+ 007A           ;       delay_nms(100);                                //延时100ms
+ 007A 04E6              ldi R16,100
+ 007C 10E0              ldi R17,0
+ 007E 0E940000          xcall _delay_nms
+ 0082                   .dbline 93
+ 0082           ;       LCD_init();                                   //液晶参数初始化设置
+ 0082 0E940000          xcall _LCD_init
+ 0086                   .dbline 94
+ 0086           ;       LCD_clear();                                  //清屏
+ 0086 0E940000          xcall _LCD_clear
+ 008A                   .dbline 96
+ 008A           ;     
+ 008A           ;       ds1302_init();                                //DS1302初始化
+ 008A 0E940000          xcall _ds1302_init
+ 008E                   .dbline 97
+ 008E           ;       DS18B20_Reset();                                                  //复位D18B20
+ 008E 0E940000          xcall _DS18B20_Reset
+ 0092                   .dbline 98
+ 0092           ;       delay_nms(10);
+ 0092 0AE0              ldi R16,10
+ 0094 10E0              ldi R17,0
+ 0096 0E940000          xcall _delay_nms
+ 009A                   .dbline 100
+ 009A           ;       //ds1302_write_time();                        //向DS1302写初始数据，如年月和时间等
+ 009A           ;       welcomeDisplay();
+ 009A B2DF              xcall _welcomeDisplay
  009C                   .dbline 101
- 009C           ;       
- 009C           ;     SYN7318_init();                               //SYN7318语音识别模块 初始化
- 009C 0E940000          xcall _SYN7318_init
- 00A0                   .dbline 102
- 00A0           ;     syn7318InitDisplay();
- 00A0 C3DF              xcall _syn7318InitDisplay
- 00A2                   .dbline 108
- 00A2           ;        
- 00A2           ; 
- 00A2           ;     //updateWords();                                //SYN7318语音识别模块 词典更新                                                 
- 00A2           ;     //SYN7318_welcome();
- 00A2           ; 
- 00A2           ;     updateWords();
- 00A2 0E940000          xcall _updateWords
- 00A6 C0C0              xjmp L10
- 00A8           L9:
- 00A8                   .dbline 110
- 00A8           ; 
- 00A8           ;     while(1) { 
- 00A8                   .dbline 112
- 00A8           ; 
- 00A8           ;               displayDateTime();
- 00A8 0E940000          xcall _displayDateTime
- 00AC                   .dbline 113
- 00AC           ;               LCD_write_temperature();
- 00AC 0E940000          xcall _LCD_write_temperature
- 00B0 21C0              xjmp L13
- 00B2           L12:
- 00B2                   .dbline 116
- 00B2           ;         
- 00B2           ;          //wifi
- 00B2           ;         while(RxBufWr_wifi != RxBufRd_wifi) {
- 00B2                   .dbline 117
- 00B2           ;             LCD_write_com(0x98);
- 00B2 08E9              ldi R16,152
- 00B4 0E940000          xcall _LCD_write_com
- 00B8                   .dbline 118
- 00B8           ;             delay_nms(2);
- 00B8 02E0              ldi R16,2
- 00BA 10E0              ldi R17,0
- 00BC 0E940000          xcall _delay_nms
- 00C0                   .dbline 119
- 00C0           ;             u8temp = RxCharBuf_wifi[RxBufRd_wifi];
- 00C0 80E0              ldi R24,<_RxCharBuf_wifi
- 00C2 90E0              ldi R25,>_RxCharBuf_wifi
- 00C4 E0910000          lds R30,_RxBufRd_wifi
- 00C8 FF27              clr R31
- 00CA E80F              add R30,R24
- 00CC F91F              adc R31,R25
- 00CE 4081              ldd R20,z+0
- 00D0                   .dbline 120
- 00D0           ;             RxBufRd_wifi++;
- 00D0 80910000          lds R24,_RxBufRd_wifi
- 00D4 8F5F              subi R24,255    ; addi 1
- 00D6 80930000          sts _RxBufRd_wifi,R24
- 00DA                   .dbline 121
- 00DA           ;             RxBufRd_wifi &= 0x0f;
- 00DA 8F70              andi R24,15
- 00DC 80930000          sts _RxBufRd_wifi,R24
- 00E0                   .dbline 122
- 00E0           ;             if(u8temp == 0x0d) break;
- 00E0 4D30              cpi R20,13
- 00E2 09F4              brne L15
- 00E4           X0:
- 00E4                   .dbline 122
- 00E4 0DC0              xjmp L14
- 00E6           L15:
- 00E6                   .dbline 123
- 00E6           ;             LCD_write_data(u8temp);
- 00E6 042F              mov R16,R20
- 00E8 0E940000          xcall _LCD_write_data
- 00EC                   .dbline 124
- 00EC           ;             delay_nms(2);
- 00EC 02E0              ldi R16,2
- 00EE 10E0              ldi R17,0
- 00F0 0E940000          xcall _delay_nms
- 00F4                   .dbline 126
- 00F4           ;             //DisplayCgrom(0x98, &u8temp);
- 00F4           ;         }
- 00F4           L13:
- 00F4                   .dbline 116
- 00F4 20900000          lds R2,_RxBufRd_wifi
- 00F8 30900000          lds R3,_RxBufWr_wifi
- 00FC 3214              cp R3,R2
- 00FE C9F6              brne L12
- 0100           X1:
- 0100           L14:
- 0100                   .dbline 129
- 0100           ; 
- 0100           ; 
- 0100           ;         startRecognition();
- 0100 0E940000          xcall _startRecognition
- 0104                   .dbline 130
- 0104           ;         command = checkSendReturn();
- 0104 0E940000          xcall _checkSendReturn
- 0108 A02E              mov R10,R16
- 010A                   .dbline 132
- 010A           ;         
- 010A           ;         switch(command){
- 010A 4A2D              mov R20,R10
- 010C 5527              clr R21
- 010E 4130              cpi R20,1
- 0110 E0E0              ldi R30,0
- 0112 5E07              cpc R21,R30
- 0114 09F4              brne X12
- 0116 4DC0              xjmp L29
- 0118           X12:
- 0118           X2:
- 0118 4230              cpi R20,2
- 011A E0E0              ldi R30,0
- 011C 5E07              cpc R21,R30
- 011E 09F4              brne X13
- 0120 54C0              xjmp L31
- 0122           X13:
- 0122           X3:
- 0122 4330              cpi R20,3
- 0124 E0E0              ldi R30,0
- 0126 5E07              cpc R21,R30
- 0128 09F4              brne X14
- 012A 7EC0              xjmp L18
- 012C           X14:
- 012C           X4:
- 012C 4430              cpi R20,4
- 012E E0E0              ldi R30,0
- 0130 5E07              cpc R21,R30
- 0132 B9F0              breq L21
- 0134           X5:
- 0134 4530              cpi R20,5
- 0136 E0E0              ldi R30,0
- 0138 5E07              cpc R21,R30
- 013A E9F0              breq L23
- 013C           X6:
- 013C 4630              cpi R20,6
- 013E E0E0              ldi R30,0
- 0140 5E07              cpc R21,R30
- 0142 69F1              breq L27
- 0144           X7:
- 0144 4730              cpi R20,7
- 0146 E0E0              ldi R30,0
- 0148 5E07              cpc R21,R30
- 014A F9F0              breq L25
- 014C           X8:
- 014C 4130              cpi R20,1
- 014E E0E0              ldi R30,0
- 0150 5E07              cpc R21,R30
- 0152 0CF4              brge X15
- 0154 4EC0              xjmp L17
- 0156           X15:
- 0156           X9:
- 0156           L36:
- 0156 4436              cpi R20,100
- 0158 E0E0              ldi R30,0
- 015A 5E07              cpc R21,R30
- 015C 09F4              brne X16
- 015E 3FC0              xjmp L33
- 0160           X16:
- 0160           X10:
- 0160 48C0              xjmp L17
- 0162           L21:
- 0162                   .dbline 137
- 0162           ;             case OVER_TIME :
- 0162           ;                 break;
- 0162           ;             case 0x04 :
- 0162           ;                 //SYN7318_Error();
- 0162           ;                 DisplayCgrom(0x88,"语音超时");
- 0162 20E0              ldi R18,<L22
- 0164 30E0              ldi R19,>L22
- 0166 08E8              ldi R16,136
- 0168 0E940000          xcall _DisplayCgrom
- 016C                   .dbline 138
- 016C           ;                 delay_nms(2);
- 016C 02E0              ldi R16,2
- 016E 10E0              ldi R17,0
- 0170 0E940000          xcall _delay_nms
- 0174                   .dbline 139
- 0174           ;                 break;
- 0174 59C0              xjmp L18
- 0176           L23:
- 0176                   .dbline 142
- 0176           ;             case 0x05 :
- 0176           ;                 //SYN7318_Error();
- 0176           ;                 DisplayCgrom(0x88,"识别拒识");
- 0176 20E0              ldi R18,<L24
- 0178 30E0              ldi R19,>L24
- 017A 08E8              ldi R16,136
- 017C 0E940000          xcall _DisplayCgrom
- 0180                   .dbline 143
- 0180           ;                 delay_nms(2);
- 0180 02E0              ldi R16,2
- 0182 10E0              ldi R17,0
- 0184 0E940000          xcall _delay_nms
- 0188                   .dbline 144
- 0188           ;                 break;
- 0188 4FC0              xjmp L18
- 018A           L25:
- 018A                   .dbline 147
- 018A           ;             case 0x07 :
- 018A           ;                 //SYN7318_Error();
- 018A           ;                 DisplayCgrom(0x88,"识别拒识一");
- 018A 20E0              ldi R18,<L26
- 018C 30E0              ldi R19,>L26
- 018E 08E8              ldi R16,136
- 0190 0E940000          xcall _DisplayCgrom
- 0194                   .dbline 148
- 0194           ;                 delay_nms(2);
- 0194 02E0              ldi R16,2
- 0196 10E0              ldi R17,0
- 0198 0E940000          xcall _delay_nms
- 019C                   .dbline 149
- 019C           ;                 break;
- 019C 45C0              xjmp L18
- 019E           L27:
- 019E                   .dbline 152
- 019E           ;             case 0x06 :
- 019E           ;                 //SYN7318_Error();
- 019E           ;                 DisplayCgrom(0x88,"识别内部错误");
- 019E 20E0              ldi R18,<L28
- 01A0 30E0              ldi R19,>L28
- 01A2 08E8              ldi R16,136
- 01A4 0E940000          xcall _DisplayCgrom
- 01A8                   .dbline 153
- 01A8           ;                 delay_nms(2);
- 01A8 02E0              ldi R16,2
- 01AA 10E0              ldi R17,0
- 01AC 0E940000          xcall _delay_nms
- 01B0                   .dbline 154
- 01B0           ;                 break;
- 01B0 3BC0              xjmp L18
- 01B2           L29:
- 01B2                   .dbline 156
- 01B2           ;             case 1 :
- 01B2           ;                 DisplayCgrom(0x8C,"救命");
- 01B2 20E0              ldi R18,<L30
- 01B4 30E0              ldi R19,>L30
- 01B6 0CE8              ldi R16,140
- 01B8 0E940000          xcall _DisplayCgrom
- 01BC                   .dbline 157
- 01BC           ;                 delay_nms(2);
- 01BC 02E0              ldi R16,2
- 01BE 10E0              ldi R17,0
- 01C0 0E940000          xcall _delay_nms
- 01C4                   .dbline 159
- 01C4           ;                 //wifi_SENDMSG();
- 01C4           ;                 wifi_Restart();
- 01C4 0E940000          xcall _wifi_Restart
- 01C8                   .dbline 160
- 01C8           ;                 break;
- 01C8 2FC0              xjmp L18
- 01CA           L31:
- 01CA                   .dbline 162
- 01CA           ;             case 2 :
- 01CA           ;                 DisplayCgrom(0x8C,"哎呦");
- 01CA 20E0              ldi R18,<L32
- 01CC 30E0              ldi R19,>L32
- 01CE 0CE8              ldi R16,140
- 01D0 0E940000          xcall _DisplayCgrom
- 01D4                   .dbline 163
- 01D4           ;                 delay_nms(2);
- 01D4 02E0              ldi R16,2
- 01D6 10E0              ldi R17,0
- 01D8 0E940000          xcall _delay_nms
- 01DC                   .dbline 164
- 01DC           ;                 break;
- 01DC 25C0              xjmp L18
- 01DE           L33:
- 01DE                   .dbline 166
- 01DE           ;             case 100 :
- 01DE           ;                 DisplayCgrom(0x8C,"温度");
- 01DE 20E0              ldi R18,<L34
- 01E0 30E0              ldi R19,>L34
- 01E2 0CE8              ldi R16,140
- 01E4 0E940000          xcall _DisplayCgrom
- 01E8                   .dbline 167
- 01E8           ;                 delay_nms(2);
- 01E8 02E0              ldi R16,2
- 01EA 10E0              ldi R17,0
- 01EC 0E940000          xcall _delay_nms
- 01F0                   .dbline 168
- 01F0           ;                 break;
- 01F0 1BC0              xjmp L18
- 01F2           L17:
- 01F2                   .dbline 170
- 01F2           ;             default :
- 01F2           ;                 DisplayCgrom(0x8C,"识别成功");
- 01F2 20E0              ldi R18,<L35
- 01F4 30E0              ldi R19,>L35
- 01F6 0CE8              ldi R16,140
- 01F8 0E940000          xcall _DisplayCgrom
- 01FC                   .dbline 171
- 01FC           ;                 delay_nms(2);
- 01FC 02E0              ldi R16,2
- 01FE 10E0              ldi R17,0
- 0200 0E940000          xcall _delay_nms
- 0204                   .dbline 172
- 0204           ;                 LCD_write_com(0x8C);
- 0204 0CE8              ldi R16,140
- 0206 0E940000          xcall _LCD_write_com
- 020A                   .dbline 173
- 020A           ;                   delay_nms(2);
- 020A 02E0              ldi R16,2
- 020C 10E0              ldi R17,0
- 020E 0E940000          xcall _delay_nms
- 0212                   .dbline 174
- 0212           ;                 temp = (command >> 4) + '0';          //在LCD上写要显示的数据 
- 0212 4A2D              mov R20,R10
- 0214 4295              swap R20
- 0216 4F70              andi R20,#0x0F
- 0218 405D              subi R20,208    ; addi 48
- 021A                   .dbline 175
- 021A           ;                 LCD_write_data(temp);
- 021A 042F              mov R16,R20
- 021C 0E940000          xcall _LCD_write_data
- 0220                   .dbline 176
- 0220           ;                 delay_nms(2);
- 0220 02E0              ldi R16,2
- 0222 10E0              ldi R17,0
- 0224 0E940000          xcall _delay_nms
- 0228                   .dbline 177
- 0228           ;                 break;
- 0228           L18:
- 0228                   .dbline 181
- 0228           ;         }
- 0228           ; 
- 0228           ;         //if(command == )
- 0228           ;       }
- 0228           L10:
- 0228                   .dbline 110
- 0228 3FCF              xjmp L9
- 022A           X11:
- 022A                   .dbline -2
- 022A           L8:
- 022A                   .dbline 0 ; func end
- 022A 0895              ret
- 022C                   .dbsym r temp 20 c
- 022C                   .dbsym r command 10 c
- 022C                   .dbsym r u8temp 20 c
- 022C                   .dbend
+ 009C           ;       init_devices(); 
+ 009C D9DF              xcall _init_devices
+ 009E                   .dbline 103
+ 009E           ;       
+ 009E           ;     SYN7318_init();                               //SYN7318语音识别模块 初始化
+ 009E 0E940000          xcall _SYN7318_init
+ 00A2                   .dbline 104
+ 00A2           ;     syn7318InitDisplay();
+ 00A2 C2DF              xcall _syn7318InitDisplay
+ 00A4                   .dbline 110
+ 00A4           ;        
+ 00A4           ; 
+ 00A4           ;     //updateWords();                                //SYN7318语音识别模块 词典更新                                                 
+ 00A4           ;     //SYN7318_welcome();
+ 00A4           ; 
+ 00A4           ;     updateWords();
+ 00A4 0E940000          xcall _updateWords
+ 00A8 E6C0              xjmp L10
+ 00AA           L9:
+ 00AA                   .dbline 112
+ 00AA           ; 
+ 00AA           ;     while(1) { 
+ 00AA                   .dbline 114
+ 00AA           ; 
+ 00AA           ;               displayDateTime();
+ 00AA 0E940000          xcall _displayDateTime
+ 00AE                   .dbline 115
+ 00AE           ;               LCD_write_temperature();
+ 00AE 0E940000          xcall _LCD_write_temperature
+ 00B2 21C0              xjmp L13
+ 00B4           L12:
+ 00B4                   .dbline 118
+ 00B4           ;         
+ 00B4           ;          //wifi
+ 00B4           ;         while(RxBufWr_wifi != RxBufRd_wifi) {
+ 00B4                   .dbline 119
+ 00B4           ;             LCD_write_com(0x98);
+ 00B4 08E9              ldi R16,152
+ 00B6 0E940000          xcall _LCD_write_com
+ 00BA                   .dbline 120
+ 00BA           ;             delay_nms(2);
+ 00BA 02E0              ldi R16,2
+ 00BC 10E0              ldi R17,0
+ 00BE 0E940000          xcall _delay_nms
+ 00C2                   .dbline 121
+ 00C2           ;             u8temp = RxCharBuf_wifi[RxBufRd_wifi];
+ 00C2 80E0              ldi R24,<_RxCharBuf_wifi
+ 00C4 90E0              ldi R25,>_RxCharBuf_wifi
+ 00C6 E0910000          lds R30,_RxBufRd_wifi
+ 00CA FF27              clr R31
+ 00CC E80F              add R30,R24
+ 00CE F91F              adc R31,R25
+ 00D0 4081              ldd R20,z+0
+ 00D2                   .dbline 122
+ 00D2           ;             RxBufRd_wifi++;
+ 00D2 80910000          lds R24,_RxBufRd_wifi
+ 00D6 8F5F              subi R24,255    ; addi 1
+ 00D8 80930000          sts _RxBufRd_wifi,R24
+ 00DC                   .dbline 123
+ 00DC           ;             RxBufRd_wifi &= 0x0f;
+ 00DC 8F70              andi R24,15
+ 00DE 80930000          sts _RxBufRd_wifi,R24
+ 00E2                   .dbline 124
+ 00E2           ;             if(u8temp == 0x0d) break;
+ 00E2 4D30              cpi R20,13
+ 00E4 09F4              brne L15
+ 00E6           X0:
+ 00E6                   .dbline 124
+ 00E6 0DC0              xjmp L14
+ 00E8           L15:
+ 00E8                   .dbline 125
+ 00E8           ;             LCD_write_data(u8temp);
+ 00E8 042F              mov R16,R20
+ 00EA 0E940000          xcall _LCD_write_data
+ 00EE                   .dbline 126
+ 00EE           ;             delay_nms(2);
+ 00EE 02E0              ldi R16,2
+ 00F0 10E0              ldi R17,0
+ 00F2 0E940000          xcall _delay_nms
+ 00F6                   .dbline 128
+ 00F6           ;             //DisplayCgrom(0x98, &u8temp);
+ 00F6           ;         }
+ 00F6           L13:
+ 00F6                   .dbline 118
+ 00F6 20900000          lds R2,_RxBufRd_wifi
+ 00FA 30900000          lds R3,_RxBufWr_wifi
+ 00FE 3214              cp R3,R2
+ 0100 C9F6              brne L12
+ 0102           X1:
+ 0102           L14:
+ 0102                   .dbline 131
+ 0102           ; 
+ 0102           ; 
+ 0102           ;         startRecognition();
+ 0102 0E940000          xcall _startRecognition
+ 0106                   .dbline 132
+ 0106           ;         command = checkSendReturn();
+ 0106 0E940000          xcall _checkSendReturn
+ 010A A02E              mov R10,R16
+ 010C                   .dbline 134
+ 010C           ;         
+ 010C           ;         switch(command){
+ 010C 4A2D              mov R20,R10
+ 010E 5527              clr R21
+ 0110 4130              cpi R20,1
+ 0112 E0E0              ldi R30,0
+ 0114 5E07              cpc R21,R30
+ 0116 09F4              brne X13
+ 0118 52C0              xjmp L29
+ 011A           X13:
+ 011A           X2:
+ 011A 4230              cpi R20,2
+ 011C E0E0              ldi R30,0
+ 011E 5E07              cpc R21,R30
+ 0120 09F4              brne X14
+ 0122 59C0              xjmp L31
+ 0124           X14:
+ 0124           X3:
+ 0124 4330              cpi R20,3
+ 0126 E0E0              ldi R30,0
+ 0128 5E07              cpc R21,R30
+ 012A 09F4              brne X15
+ 012C A4C0              xjmp L18
+ 012E           X15:
+ 012E           X4:
+ 012E 4430              cpi R20,4
+ 0130 E0E0              ldi R30,0
+ 0132 5E07              cpc R21,R30
+ 0134 E1F0              breq L21
+ 0136           X5:
+ 0136 4530              cpi R20,5
+ 0138 E0E0              ldi R30,0
+ 013A 5E07              cpc R21,R30
+ 013C 11F1              breq L23
+ 013E           X6:
+ 013E 4630              cpi R20,6
+ 0140 E0E0              ldi R30,0
+ 0142 5E07              cpc R21,R30
+ 0144 91F1              breq L27
+ 0146           X7:
+ 0146 4730              cpi R20,7
+ 0148 E0E0              ldi R30,0
+ 014A 5E07              cpc R21,R30
+ 014C 21F1              breq L25
+ 014E           X8:
+ 014E 4130              cpi R20,1
+ 0150 E0E0              ldi R30,0
+ 0152 5E07              cpc R21,R30
+ 0154 0CF4              brge X16
+ 0156 74C0              xjmp L17
+ 0158           X16:
+ 0158           X9:
+ 0158           L38:
+ 0158 4436              cpi R20,100
+ 015A E0E0              ldi R30,0
+ 015C 5E07              cpc R21,R30
+ 015E 09F4              brne X17
+ 0160 44C0              xjmp L33
+ 0162           X17:
+ 0162           X10:
+ 0162 4536              cpi R20,101
+ 0164 E0E0              ldi R30,0
+ 0166 5E07              cpc R21,R30
+ 0168 09F4              brne X18
+ 016A 56C0              xjmp L35
+ 016C           X18:
+ 016C           X11:
+ 016C 69C0              xjmp L17
+ 016E           L21:
+ 016E                   .dbline 139
+ 016E           ;             case OVER_TIME :
+ 016E           ;                 break;
+ 016E           ;             case 0x04 :
+ 016E           ;                 //SYN7318_Error();
+ 016E           ;                 DisplayCgrom(0x88,"语音超时");
+ 016E 20E0              ldi R18,<L22
+ 0170 30E0              ldi R19,>L22
+ 0172 08E8              ldi R16,136
+ 0174 0E940000          xcall _DisplayCgrom
+ 0178                   .dbline 140
+ 0178           ;                 delay_nms(2);
+ 0178 02E0              ldi R16,2
+ 017A 10E0              ldi R17,0
+ 017C 0E940000          xcall _delay_nms
+ 0180                   .dbline 141
+ 0180           ;                 break;
+ 0180 7AC0              xjmp L18
+ 0182           L23:
+ 0182                   .dbline 144
+ 0182           ;             case 0x05 :
+ 0182           ;                 //SYN7318_Error();
+ 0182           ;                 DisplayCgrom(0x88,"识别拒识");
+ 0182 20E0              ldi R18,<L24
+ 0184 30E0              ldi R19,>L24
+ 0186 08E8              ldi R16,136
+ 0188 0E940000          xcall _DisplayCgrom
+ 018C                   .dbline 145
+ 018C           ;                 delay_nms(2);
+ 018C 02E0              ldi R16,2
+ 018E 10E0              ldi R17,0
+ 0190 0E940000          xcall _delay_nms
+ 0194                   .dbline 146
+ 0194           ;                 break;
+ 0194 70C0              xjmp L18
+ 0196           L25:
+ 0196                   .dbline 149
+ 0196           ;             case 0x07 :
+ 0196           ;                 //SYN7318_Error();
+ 0196           ;                 DisplayCgrom(0x88,"识别拒识一");
+ 0196 20E0              ldi R18,<L26
+ 0198 30E0              ldi R19,>L26
+ 019A 08E8              ldi R16,136
+ 019C 0E940000          xcall _DisplayCgrom
+ 01A0                   .dbline 150
+ 01A0           ;                 delay_nms(2);
+ 01A0 02E0              ldi R16,2
+ 01A2 10E0              ldi R17,0
+ 01A4 0E940000          xcall _delay_nms
+ 01A8                   .dbline 151
+ 01A8           ;                 break;
+ 01A8 66C0              xjmp L18
+ 01AA           L27:
+ 01AA                   .dbline 154
+ 01AA           ;             case 0x06 :
+ 01AA           ;                 //SYN7318_Error();
+ 01AA           ;                 DisplayCgrom(0x88,"识别内部错误");
+ 01AA 20E0              ldi R18,<L28
+ 01AC 30E0              ldi R19,>L28
+ 01AE 08E8              ldi R16,136
+ 01B0 0E940000          xcall _DisplayCgrom
+ 01B4                   .dbline 155
+ 01B4           ;                 delay_nms(2);
+ 01B4 02E0              ldi R16,2
+ 01B6 10E0              ldi R17,0
+ 01B8 0E940000          xcall _delay_nms
+ 01BC                   .dbline 156
+ 01BC           ;                 break;
+ 01BC 5CC0              xjmp L18
+ 01BE           L29:
+ 01BE                   .dbline 158
+ 01BE           ;             case 1 :
+ 01BE           ;                 DisplayCgrom(0x8C,"救命");
+ 01BE 20E0              ldi R18,<L30
+ 01C0 30E0              ldi R19,>L30
+ 01C2 0CE8              ldi R16,140
+ 01C4 0E940000          xcall _DisplayCgrom
+ 01C8                   .dbline 159
+ 01C8           ;                 delay_nms(2);
+ 01C8 02E0              ldi R16,2
+ 01CA 10E0              ldi R17,0
+ 01CC 0E940000          xcall _delay_nms
+ 01D0                   .dbline 161
+ 01D0           ;                 //wifi_SENDMSG();
+ 01D0           ;                 wifi_Restart();
+ 01D0 0E940000          xcall _wifi_Restart
+ 01D4                   .dbline 162
+ 01D4           ;                 break;
+ 01D4 50C0              xjmp L18
+ 01D6           L31:
+ 01D6                   .dbline 164
+ 01D6           ;             case 2 :
+ 01D6           ;                 DisplayCgrom(0x8C,"哎呦");
+ 01D6 20E0              ldi R18,<L32
+ 01D8 30E0              ldi R19,>L32
+ 01DA 0CE8              ldi R16,140
+ 01DC 0E940000          xcall _DisplayCgrom
+ 01E0                   .dbline 165
+ 01E0           ;                 delay_nms(2);
+ 01E0 02E0              ldi R16,2
+ 01E2 10E0              ldi R17,0
+ 01E4 0E940000          xcall _delay_nms
+ 01E8                   .dbline 166
+ 01E8           ;                 break;
+ 01E8 46C0              xjmp L18
+ 01EA           L33:
+ 01EA                   .dbline 168
+ 01EA           ;             case 100 :
+ 01EA           ;                 DisplayCgrom(0x8C,"温度");
+ 01EA 20E0              ldi R18,<L34
+ 01EC 30E0              ldi R19,>L34
+ 01EE 0CE8              ldi R16,140
+ 01F0 0E940000          xcall _DisplayCgrom
+ 01F4                   .dbline 169
+ 01F4           ;                 delay_nms(2);
+ 01F4 02E0              ldi R16,2
+ 01F6 10E0              ldi R17,0
+ 01F8 0E940000          xcall _delay_nms
+ 01FC                   .dbline 170
+ 01FC           ;                               strcpy((char*)tempstr,(char*)Temperaturetostr());
+ 01FC 0E940000          xcall _Temperaturetostr
+ 0200 9801              movw R18,R16
+ 0202 8E01              movw R16,R28
+ 0204 0B5E              subi R16,235  ; offset = 21
+ 0206 1F4F              sbci R17,255
+ 0208 0E940000          xcall _strcpy
+ 020C                   .dbline 171
+ 020C           ;                               voicePlayer(tempstr);
+ 020C 8E01              movw R16,R28
+ 020E 0B5E              subi R16,235  ; offset = 21
+ 0210 1F4F              sbci R17,255
+ 0212 0E940000          xcall _voicePlayer
+ 0216                   .dbline 172
+ 0216           ;                 break;
+ 0216 2FC0              xjmp L18
+ 0218           L35:
+ 0218                   .dbline 174
+ 0218           ;                       case 101:
+ 0218           ;                               DisplayCgrom(0x8C,"时间");
+ 0218 20E0              ldi R18,<L36
+ 021A 30E0              ldi R19,>L36
+ 021C 0CE8              ldi R16,140
+ 021E 0E940000          xcall _DisplayCgrom
+ 0222                   .dbline 175
+ 0222           ;                               delay_nms(2);
+ 0222 02E0              ldi R16,2
+ 0224 10E0              ldi R17,0
+ 0226 0E940000          xcall _delay_nms
+ 022A                   .dbline 176
+ 022A           ;                               strcpy((char*)timestr,(char*)Timetostr());
+ 022A 0E940000          xcall _Timetostr
+ 022E 6801              movw R12,R16
+ 0230 9601              movw R18,R12
+ 0232 8E01              movw R16,R28
+ 0234 0E940000          xcall _strcpy
+ 0238                   .dbline 177
+ 0238           ;                               voicePlayer(timestr);
+ 0238 8E01              movw R16,R28
+ 023A 0E940000          xcall _voicePlayer
+ 023E                   .dbline 178
+ 023E           ;                               break;
+ 023E 1BC0              xjmp L18
+ 0240           L17:
+ 0240                   .dbline 180
+ 0240           ;             default :
+ 0240           ;                 DisplayCgrom(0x8C,"识别成功");
+ 0240 20E0              ldi R18,<L37
+ 0242 30E0              ldi R19,>L37
+ 0244 0CE8              ldi R16,140
+ 0246 0E940000          xcall _DisplayCgrom
+ 024A                   .dbline 181
+ 024A           ;                 delay_nms(2);
+ 024A 02E0              ldi R16,2
+ 024C 10E0              ldi R17,0
+ 024E 0E940000          xcall _delay_nms
+ 0252                   .dbline 182
+ 0252           ;                 LCD_write_com(0x8C);
+ 0252 0CE8              ldi R16,140
+ 0254 0E940000          xcall _LCD_write_com
+ 0258                   .dbline 183
+ 0258           ;                   delay_nms(2);
+ 0258 02E0              ldi R16,2
+ 025A 10E0              ldi R17,0
+ 025C 0E940000          xcall _delay_nms
+ 0260                   .dbline 184
+ 0260           ;                 temp = (command >> 4) + '0';          //在LCD上写要显示的数据 
+ 0260 4A2D              mov R20,R10
+ 0262 4295              swap R20
+ 0264 4F70              andi R20,#0x0F
+ 0266 405D              subi R20,208    ; addi 48
+ 0268                   .dbline 185
+ 0268           ;                 LCD_write_data(temp);
+ 0268 042F              mov R16,R20
+ 026A 0E940000          xcall _LCD_write_data
+ 026E                   .dbline 186
+ 026E           ;                 delay_nms(2);
+ 026E 02E0              ldi R16,2
+ 0270 10E0              ldi R17,0
+ 0272 0E940000          xcall _delay_nms
+ 0276                   .dbline 187
+ 0276           ;                 break;
+ 0276           L18:
+ 0276                   .dbline 191
+ 0276           ;         }
+ 0276           ; 
+ 0276           ;         //if(command == )
+ 0276           ;       }
+ 0276           L10:
+ 0276                   .dbline 112
+ 0276 19CF              xjmp L9
+ 0278           X12:
+ 0278                   .dbline -2
+ 0278           L8:
+ 0278                   .dbline 0 ; func end
+ 0278 6C96              adiw R28,28
+ 027A 0895              ret
+ 027C                   .dbsym l tempstr 21 A[7:7]c
+ 027C                   .dbsym l timestr 0 A[21:21]c
+ 027C                   .dbsym r temp 20 c
+ 027C                   .dbsym r command 10 c
+ 027C                   .dbsym r u8temp 20 c
+ 027C                   .dbend
                         .area data(ram, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0000           L35:
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0000           L37:
  0000                   .blkb 9
                         .area idata
  0000 CAB6B1F0B3C9B9A600        .byte 202,182,177,240,179,201,185,166,0
                         .area data(ram, con, rel)
- 0009                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0009           L34:
+ 0009                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0009           L36:
  0009                   .blkb 5
                         .area idata
- 0009 CEC2B6C800        .byte 206,194,182,200,0
+ 0009 CAB1BCE400        .byte 202,177,188,228,0
                         .area data(ram, con, rel)
- 000E                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 000E           L32:
+ 000E                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 000E           L34:
  000E                   .blkb 5
                         .area idata
- 000E B0A5DFCF00        .byte 176,165,223,207,0
+ 000E CEC2B6C800        .byte 206,194,182,200,0
                         .area data(ram, con, rel)
- 0013                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0013           L30:
+ 0013                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0013           L32:
  0013                   .blkb 5
                         .area idata
- 0013 BEC8C3FC00        .byte 190,200,195,252,0
+ 0013 B0A5DFCF00        .byte 176,165,223,207,0
                         .area data(ram, con, rel)
- 0018                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0018           L28:
- 0018                   .blkb 13
+ 0018                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0018           L30:
+ 0018                   .blkb 5
                         .area idata
- 0018 CAB6B1F0C4DAB2BFB4EDCEF300        .byte 202,182,177,240,196,218,178,191,180,237,206,243,0
+ 0018 BEC8C3FC00        .byte 190,200,195,252,0
                         .area data(ram, con, rel)
- 0025                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0025           L26:
- 0025                   .blkb 11
+ 001D                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 001D           L28:
+ 001D                   .blkb 13
                         .area idata
- 0025 CAB6B1F0BEDCCAB6D2BB00    .byte 202,182,177,240,190,220,202,182,210,187,0
+ 001D CAB6B1F0C4DAB2BFB4EDCEF300        .byte 202,182,177,240,196,218,178,191,180,237,206,243,0
                         .area data(ram, con, rel)
- 0030                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0030           L24:
- 0030                   .blkb 9
+ 002A                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 002A           L26:
+ 002A                   .blkb 11
                         .area idata
- 0030 CAB6B1F0BEDCCAB600        .byte 202,182,177,240,190,220,202,182,0
+ 002A CAB6B1F0BEDCCAB6D2BB00    .byte 202,182,177,240,190,220,202,182,210,187,0
                         .area data(ram, con, rel)
- 0039                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0039           L22:
- 0039                   .blkb 9
+ 0035                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0035           L24:
+ 0035                   .blkb 9
                         .area idata
- 0039 D3EFD2F4B3ACCAB100        .byte 211,239,210,244,179,172,202,177,0
+ 0035 CAB6B1F0BEDCCAB600        .byte 202,182,177,240,190,220,202,182,0
                         .area data(ram, con, rel)
- 0042                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0042           L6:
- 0042                   .blkb 9
+ 003E                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 003E           L22:
+ 003E                   .blkb 9
                         .area idata
- 0042 B3F5CABCBBAFD6D000        .byte 179,245,202,188,187,175,214,208,0
+ 003E D3EFD2F4B3ACCAB100        .byte 211,239,210,244,179,172,202,177,0
                         .area data(ram, con, rel)
- 004B                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 004B           L5:
- 004B                   .blkb 9
+ 0047                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0047           L6:
+ 0047                   .blkb 9
                         .area idata
- 004B D3EFD2F4C4A3BFE900        .byte 211,239,210,244,196,163,191,233,0
+ 0047 B3F5CABCBBAFD6D000        .byte 179,245,202,188,187,175,214,208,0
                         .area data(ram, con, rel)
- 0054                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 0054           L3:
- 0054                   .blkb 9
+ 0050                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0050           L5:
+ 0050                   .blkb 9
                         .area idata
- 0054 D4A4BEAFCFB5CDB300        .byte 212,164,190,175,207,181,205,179,0
+ 0050 D3EFD2F4C4A3BFE900        .byte 211,239,210,244,196,163,191,233,0
                         .area data(ram, con, rel)
- 005D                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 005D           L2:
- 005D                   .blkb 17
+ 0059                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0059           L3:
+ 0059                   .blkb 9
                         .area idata
- 005D BBB6D3ADCAB9D3C3B6C0BED3C0CFC8CB  .byte 187,182,211,173,202,185,211,195,182,192,190,211,192,207,200,203
- 006D 00                .byte 0
+ 0059 D4A4BEAFCFB5CDB300        .byte 212,164,190,175,207,181,205,179,0
                         .area data(ram, con, rel)
- 006E                   .dbfile E:\git\AVR\OldManAlarm\main.c
- 006E           ; }
- 006E           ; 
+ 0062                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0062           L2:
+ 0062                   .blkb 17
+                        .area idata
+ 0062 BBB6D3ADCAB9D3C3B6C0BED3C0CFC8CB  .byte 187,182,211,173,202,185,211,195,182,192,190,211,192,207,200,203
+ 0072 00                .byte 0
+                        .area data(ram, con, rel)
+ 0073                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\main.c
+ 0073           ; }
+ 0073           ; 

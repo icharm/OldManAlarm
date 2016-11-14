@@ -84,9 +84,7 @@ void main(void)
     // volatile unsigned char temp;
 	uchar u8temp;
     uchar command;
-    uchar temp;
-	uchar timestr[21];								//时间字符串数组
-	uchar tempstr[7];								//温度字符串数组
+    uchar temp;   
 
     system_init();                                //系统初始化，设置IO口属性
 	delay_nms(100);                                //延时100ms
@@ -113,21 +111,6 @@ void main(void)
 
 		displayDateTime();
 		LCD_write_temperature();
-        
-         //wifi
-        while(RxBufWr_wifi != RxBufRd_wifi) {
-            LCD_write_com(0x98);
-            delay_nms(2);
-            u8temp = RxCharBuf_wifi[RxBufRd_wifi];
-            RxBufRd_wifi++;
-            RxBufRd_wifi &= 0x0f;
-            if(u8temp == 0x0d) break;
-            LCD_write_data(u8temp);
-            delay_nms(2);
-            //DisplayCgrom(0x98, &u8temp);
-        }
-
-
         startRecognition();
         command = checkSendReturn();
         
@@ -167,15 +150,7 @@ void main(void)
             case 100 :
                 DisplayCgrom(0x8C,"温度");
                 delay_nms(2);
-				strcpy((char*)tempstr,(char*)Temperaturetostr());
-				voicePlayer(tempstr);
                 break;
-			case 101:
-				DisplayCgrom(0x8C,"时间");
-				delay_nms(2);
-				strcpy((char*)timestr,(char*)Timetostr());
-				voicePlayer(timestr);
-				break;
             default :
                 DisplayCgrom(0x8C,"识别成功");
                 delay_nms(2);
@@ -188,6 +163,18 @@ void main(void)
         }
 
         //if(command == )
+       //wifi
+        while(RxBufWr_wifi != RxBufRd_wifi) {
+            LCD_write_com(0x98);
+            delay_nms(2);
+            u8temp = RxCharBuf_wifi[RxBufRd_wifi];
+            RxBufRd_wifi++;
+            RxBufRd_wifi &= 0x0f;
+            if(u8temp == 0x0d) break;
+            LCD_write_data(u8temp);
+            delay_nms(2);
+            //DisplayCgrom(0x98, &u8temp);
+        }
 	}
 }
 

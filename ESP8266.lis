@@ -1,7 +1,7 @@
                         .module ESP8266.c
                         .area text(rom, con, rel)
  0000                   .dbfile ESP8266.c
- 0000                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0000                   .dbfunc e wifi_Restart _wifi_Restart fV
                         .even
  0000           _wifi_Restart::
@@ -283,50 +283,50 @@
  00E2 E2CF              xjmp _wifi_SendMsg
  00E4                   .dbend
                         .area data(ram, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0000           L14:
  0000                   .blkb 27
                         .area idata
  0000 47455420687474703A2F2F616C61726D  .byte 'G,'E,'T,32,'h,'t,'t,'p,58,47,47,'a,'l,'a,'r,'m
  0010 2E69636861726D2E6D6500    .byte 46,'i,'c,'h,'a,'r,'m,46,'m,'e,0
                         .area data(ram, con, rel)
- 001B                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 001B                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  001B           L12:
  001B                   .blkb 11
                         .area idata
  001B 41542B43495053454E4400    .byte 'A,'T,43,'C,'I,'P,'S,'E,'N,'D,0
                         .area data(ram, con, rel)
- 0026                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0026                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0026           L10:
  0026                   .blkb 13
                         .area idata
  0026 41542B4349504D4F44453D3100        .byte 'A,'T,43,'C,'I,'P,'M,'O,'D,'E,61,49,0
                         .area data(ram, con, rel)
- 0033                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0033                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0033           L8:
  0033                   .blkb 23
                         .area idata
  0033 5443502C616C61726D2E69636861726D  .byte 'T,'C,'P,44,'a,'l,'a,'r,'m,46,'i,'c,'h,'a,'r,'m
  0043 2E6D652C383000    .byte 46,'m,'e,44,56,48,0
                         .area data(ram, con, rel)
- 004A                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 004A                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  004A           L6:
  004A                   .blkb 12
                         .area idata
  004A 41542B4349504D55583D3000  .byte 'A,'T,43,'C,'I,'P,'M,'U,'X,61,48,0
                         .area data(ram, con, rel)
- 0056                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0056                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0056           L4:
  0056                   .blkb 28
                         .area idata
  0056 41542B43574A41503D49434841524D2C  .byte 'A,'T,43,'C,'W,'J,'A,'P,61,'I,'C,'H,'A,'R,'M,44
  0066 6D656979616E6C69616E6700  .byte 'm,'e,'i,'y,'a,'n,'l,'i,'a,'n,'g,0
                         .area data(ram, con, rel)
- 0072                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0072                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0072           L2:
  0072                   .blkb 7
                         .area idata
  0072 41542B52535400    .byte 'A,'T,43,'R,'S,'T,0
                         .area data(ram, con, rel)
- 0079                   .dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+ 0079                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
  0079           ; }

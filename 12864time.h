@@ -42,3 +42,4 @@ void ds1302_read_time(void);
 void ds1302_init(void);
 void dayToChina(unsigned char day);
 void displayDateTime(void);
+unsigned char * Timetostr(void);

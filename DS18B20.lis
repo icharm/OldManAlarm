@@ -1,7 +1,7 @@
                         .module DS18B20.C
                         .area text(rom, con, rel)
  0000                   .dbfile DS18B20.C
- 0000                   .dbfile E:\git\AVR\OldManAlarm\DS18B20.C
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
  0000                   .dbfunc e DS18B20_Reset _DS18B20_Reset fc
  0000           ;              i -> R20
                         .even
@@ -15,7 +15,7 @@
  0002           ; 
  0002           ; 
  0002           ; uint temp_value;
- 0002           ; uint temp,A1,A2,A3;
+ 0002           ; uint A1,A2,A3;
  0002           ; 
  0002           ; //************************************************************************* 
  0002           ; //                    DS18B20初始化
@@ -354,7 +354,7 @@
  00CE A0F3              brlo L20
  00D0           X5:
  00D0                   .dbline 126
- 00D0           ;       i = buf[1];
+ 00D0           ;       i = buf[1];           
  00D0 4981              ldd R20,y+1
  00D2 5527              clr R21
  00D4                   .dbline 127
@@ -369,8 +369,8 @@
  00DE 5329              or R21,R3
  00E0                   .dbline 129
  00E0           ;       temp_value=i;
- 00E0 50930900          sts _temp_value+1,R21
- 00E4 40930800          sts _temp_value,R20
+ 00E0 50930700          sts _temp_value+1,R21
+ 00E4 40930600          sts _temp_value,R20
  00E8                   .dbline 130
  00E8           ;     temp_value=temp_value*0.625; //不是乘以0.0625的原因是为了把小数点后一位数据也转化为可以显示的数据
  00E8 00E0              ldi R16,<L25
@@ -378,8 +378,8 @@
  00EC 0E940000          xcall elpm32
  00F0 1801              movw R2,R16
  00F2 2901              movw R4,R18
- 00F4 00910800          lds R16,_temp_value
- 00F8 10910900          lds R17,_temp_value+1
+ 00F4 00910600          lds R16,_temp_value
+ 00F8 10910700          lds R17,_temp_value+1
  00FC 0E940000          xcall uint2fp
  0100 3A93              st -y,R19
  0102 2A93              st -y,R18
@@ -389,8 +389,8 @@
  010A 9201              movw R18,R4
  010C 0E940000          xcall fpmule2
  0110 0E940000          xcall fpint
- 0114 10930900          sts _temp_value+1,R17
- 0118 00930800          sts _temp_value,R16
+ 0114 10930700          sts _temp_value+1,R17
+ 0118 00930600          sts _temp_value,R16
  011C                   .dbline 133
  011C           ;                                       //比如温度本身为27.5度，为了在后续的数据处理程序中得到BCD码，我们先放大到275
  011C           ;                                 //然后在显示的时候确定小数点的位置即可，就能显示出27.5度了
@@ -488,8 +488,8 @@
  0176 95DF              xcall _DS18B20_Read_temp
  0178                   .dbline 158
  0178           ;     data_do(temp_value);                 //处理数据，得到要显示的值
- 0178 00910800          lds R16,_temp_value
- 017C 10910900          lds R17,_temp_value+1
+ 0178 00910600          lds R16,_temp_value
+ 017C 10910700          lds R17,_temp_value+1
  0180 D2DF              xcall _data_do
  0182                   .dbline 160
  0182           ;       
@@ -574,8 +574,101 @@
  0204 0895              ret
  0206                   .dbsym l temp 0 c
  0206                   .dbend
+                        .area data(ram, con, rel)
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
+ 0000           L30:
+ 0000                   .blkb 2
+                        .area idata
+ 0000 0000              .byte 0,0
+                        .area data(ram, con, rel)
+ 0002                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
+ 0002                   .blkb 5
+                        .area idata
+ 0002 0000000000        .byte 0,0,0,0,0
+                        .area data(ram, con, rel)
+ 0007                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
+                        .area text(rom, con, rel)
+ 0206                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
+ 0206                   .dbfunc e Temperaturetostr _Temperaturetostr fpc
+ 0206           ;            str -> y+0
+                        .even
+ 0206           _Temperaturetostr::
+ 0206 2797              sbiw R28,7
+ 0208                   .dbline -1
+ 0208                   .dbline 179
+ 0208           ; 
+ 0208           ; }
+ 0208           ; 
+ 0208           ; //读取温度，保存到字符串数组中
+ 0208           ; unsigned char* Temperaturetostr(void)
+ 0208           ; {
+ 0208                   .dbline 180
+ 0208           ;       unsigned char str[7]="\0";              //温度字符串数组
+ 0208 80E0              ldi R24,<L30
+ 020A 90E0              ldi R25,>L30
+ 020C FE01              movw R30,R28
+ 020E 07E0              ldi R16,7
+ 0210 10E0              ldi R17,0
+ 0212 FA93              st -y,R31
+ 0214 EA93              st -y,R30
+ 0216 9A93              st -y,R25
+ 0218 8A93              st -y,R24
+ 021A 0E940000          xcall asgnblk
+ 021E                   .dbline 181
+ 021E           ;       ds1820_start();                    //启动一次转换
+ 021E 3CDF              xcall _ds1820_start
+ 0220                   .dbline 182
+ 0220           ;       DS18B20_Read_temp();               //读取温度数值
+ 0220 40DF              xcall _DS18B20_Read_temp
+ 0222                   .dbline 183
+ 0222           ;     data_do(temp_value);                 //处理数据，得到要显示的值
+ 0222 00910600          lds R16,_temp_value
+ 0226 10910700          lds R17,_temp_value+1
+ 022A 7DDF              xcall _data_do
+ 022C                   .dbline 184
+ 022C           ;       str[0] = A1 + '0';
+ 022C 80910400          lds R24,_A1
+ 0230 90910500          lds R25,_A1+1
+ 0234 C096              adiw R24,48
+ 0236 8883              std y+0,R24
+ 0238                   .dbline 185
+ 0238           ;       str[1] = A2 + '0';
+ 0238 80910200          lds R24,_A2
+ 023C 90910300          lds R25,_A2+1
+ 0240 C096              adiw R24,48
+ 0242 8983              std y+1,R24
+ 0244                   .dbline 186
+ 0244           ;       str[2]='.';
+ 0244 8EE2              ldi R24,46
+ 0246 8A83              std y+2,R24
+ 0248                   .dbline 187
+ 0248           ;       str[3] = A3 + '0';
+ 0248 80910000          lds R24,_A3
+ 024C 90910100          lds R25,_A3+1
+ 0250 C096              adiw R24,48
+ 0252 8B83              std y+3,R24
+ 0254                   .dbline 188
+ 0254           ;       strcat((char*)str, "℃");
+ 0254 20E0              ldi R18,<L28
+ 0256 30E0              ldi R19,>L28
+ 0258 8E01              movw R16,R28
+ 025A 0E940000          xcall _strcat
+ 025E                   .dbline 189
+ 025E           ;       str[6] = 0;
+ 025E 2224              clr R2
+ 0260 2E82              std y+6,R2
+ 0262                   .dbline 190
+ 0262           ;       return str;
+ 0262 8E01              movw R16,R28
+ 0264                   .dbline -2
+ 0264           L29:
+ 0264                   .dbline 0 ; func end
+ 0264 2796              adiw R28,7
+ 0266 0895              ret
+ 0268                   .dbsym l str 0 A[7:7]c
+ 0268                   .dbend
                         .area bss(ram, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\DS18B20.C
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
  0000           _A3::
  0000                   .blkb 2
  0002                   .dbsym e A3 _A3 i
@@ -585,22 +678,18 @@
  0004           _A1::
  0004                   .blkb 2
  0006                   .dbsym e A1 _A1 i
- 0006           _temp::
+ 0006           _temp_value::
  0006                   .blkb 2
- 0008                   .dbsym e temp _temp i
- 0008           _temp_value::
- 0008                   .blkb 2
- 000A                   .dbsym e temp_value _temp_value i
+ 0008                   .dbsym e temp_value _temp_value i
                         .area data(ram, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\DS18B20.C
- 0000           L28:
- 0000                   .blkb 3
+ 0007                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
+ 0007           L28:
+ 0007                   .blkb 3
                         .area idata
- 0000 A1E600            .byte 161,230,0
+ 0007 A1E600            .byte 161,230,0
                         .area data(ram, con, rel)
- 0003                   .dbfile E:\git\AVR\OldManAlarm\DS18B20.C
+ 000A                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\DS18B20.C
                         .area lit(rom, con, rel)
  0000           L25:
  0000 0000203F          .word 0x0,0x3f20
- 0004           ; 
  0004           ; }

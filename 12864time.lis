@@ -24,10 +24,10 @@
  0006 5905              .byte 'Y,5
                         .area data(ram, con, rel)
  0008                   .dbfile 12864time.c
- 0008                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
+ 0008                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
  0008                   .dbsym e time_buf _time_buf A[8:8]c
                         .area text(rom, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
  0000                   .dbfunc e ds1302_write_byte _ds1302_write_byte fV
  0000           ;              i -> R20
  0000           ;              d -> R18
@@ -388,587 +388,753 @@
  00CA 20910600          lds R18,_time_buf+6
  00CE 00E8              ldi R16,128
  00D0 97DF              xcall _ds1302_write_byte
- 00D2                   .dbline 120
- 00D2           ;       ds1302_write_byte(ds1302_day_add,time_buf[7]);          //周 
- 00D2 20910700          lds R18,_time_buf+7
- 00D6 0AE8              ldi R16,138
- 00D8 93DF              xcall _ds1302_write_byte
- 00DA                   .dbline 121
- 00DA           ;       ds1302_write_byte(ds1302_control_add,0x80);             //打开写保护 
- 00DA 20E8              ldi R18,128
- 00DC 0EE8              ldi R16,142
- 00DE                   .dbline -2
- 00DE           L27:
- 00DE                   .dbline 0 ; func end
- 00DE 90CF              xjmp _ds1302_write_byte
- 00E0                   .dbend
- 00E0                   .dbfunc e ds1302_read_time _ds1302_read_time fV
+ 00D2                   .dbline 121
+ 00D2           ;       //ds1302_write_byte(ds1302_day_add,time_buf[7]);                //周 
+ 00D2           ;       ds1302_write_byte(ds1302_control_add,0x80);             //打开写保护 
+ 00D2 20E8              ldi R18,128
+ 00D4 0EE8              ldi R16,142
+ 00D6                   .dbline -2
+ 00D6           L27:
+ 00D6                   .dbline 0 ; func end
+ 00D6 94CF              xjmp _ds1302_write_byte
+ 00D8                   .dbend
+ 00D8                   .dbfunc e ds1302_read_time _ds1302_read_time fV
                         .even
- 00E0           _ds1302_read_time::
- 00E0 AA92              st -y,R10
- 00E2 4A93              st -y,R20
- 00E4                   .dbline -1
- 00E4                   .dbline 129
- 00E4           ; }
- 00E4           ; 
- 00E4           ; //***********************************************************************
- 00E4           ; //                     从DS302读出时钟数据
- 00E4           ; //***********************************************************************
- 00E4           ; 
- 00E4           ; void ds1302_read_time(void)  
- 00E4           ; { 
- 00E4                   .dbline 131
- 00E4           ; 
- 00E4           ;       time_buf[1]=ds1302_read_byte(ds1302_year_add);          //年 
- 00E4 0CE8              ldi R16,140
+ 00D8           _ds1302_read_time::
+ 00D8 AA92              st -y,R10
+ 00DA 4A93              st -y,R20
+ 00DC                   .dbline -1
+ 00DC                   .dbline 129
+ 00DC           ; }
+ 00DC           ; 
+ 00DC           ; //***********************************************************************
+ 00DC           ; //                     从DS302读出时钟数据
+ 00DC           ; //***********************************************************************
+ 00DC           ; 
+ 00DC           ; void ds1302_read_time(void)  
+ 00DC           ; { 
+ 00DC                   .dbline 131
+ 00DC           ; 
+ 00DC           ;       time_buf[1]=ds1302_read_byte(ds1302_year_add);          //年 
+ 00DC 0CE8              ldi R16,140
+ 00DE B2DF              xcall _ds1302_read_byte
+ 00E0 00930100          sts _time_buf+1,R16
+ 00E4                   .dbline 132
+ 00E4           ;       time_buf[2]=ds1302_read_byte(ds1302_month_add);         //月 
+ 00E4 08E8              ldi R16,136
  00E6 AEDF              xcall _ds1302_read_byte
- 00E8 00930100          sts _time_buf+1,R16
- 00EC                   .dbline 132
- 00EC           ;       time_buf[2]=ds1302_read_byte(ds1302_month_add);         //月 
- 00EC 08E8              ldi R16,136
+ 00E8 00930200          sts _time_buf+2,R16
+ 00EC                   .dbline 133
+ 00EC           ;       time_buf[3]=ds1302_read_byte(ds1302_date_add);          //日 
+ 00EC 06E8              ldi R16,134
  00EE AADF              xcall _ds1302_read_byte
- 00F0 00930200          sts _time_buf+2,R16
- 00F4                   .dbline 133
- 00F4           ;       time_buf[3]=ds1302_read_byte(ds1302_date_add);          //日 
- 00F4 06E8              ldi R16,134
- 00F6 A6DF              xcall _ds1302_read_byte
- 00F8 A02E              mov R10,R16
- 00FA A0920300          sts _time_buf+3,R10
- 00FE                   .dbline 134
- 00FE           ;       time_buf[4]=ds1302_read_byte(ds1302_hr_add);            //时 
- 00FE 04E8              ldi R16,132
- 0100 A1DF              xcall _ds1302_read_byte
- 0102 A02E              mov R10,R16
- 0104 A0920400          sts _time_buf+4,R10
- 0108                   .dbline 135
- 0108           ;       time_buf[5]=ds1302_read_byte(ds1302_min_add);           //分 
- 0108 02E8              ldi R16,130
- 010A 9CDF              xcall _ds1302_read_byte
- 010C A02E              mov R10,R16
- 010E A0920500          sts _time_buf+5,R10
- 0112                   .dbline 136
- 0112           ;       time_buf[6]=(ds1302_read_byte(ds1302_sec_add))&0x7F;//秒 
- 0112 00E8              ldi R16,128
- 0114 97DF              xcall _ds1302_read_byte
- 0116 402F              mov R20,R16
- 0118 842F              mov R24,R20
- 011A 8F77              andi R24,127
- 011C 80930600          sts _time_buf+6,R24
- 0120                   .dbline 137
- 0120           ;       time_buf[7]=ds1302_read_byte(ds1302_day_add);           //周 
- 0120 0AE8              ldi R16,138
- 0122 90DF              xcall _ds1302_read_byte
- 0124 A02E              mov R10,R16
- 0126 A0920700          sts _time_buf+7,R10
- 012A                   .dbline -2
- 012A           L36:
- 012A                   .dbline 0 ; func end
- 012A 4991              ld R20,y+
- 012C A990              ld R10,y+
- 012E 0895              ret
- 0130                   .dbend
- 0130                   .dbfunc e ds1302_init _ds1302_init fV
+ 00F0 A02E              mov R10,R16
+ 00F2 A0920300          sts _time_buf+3,R10
+ 00F6                   .dbline 134
+ 00F6           ;       time_buf[4]=ds1302_read_byte(ds1302_hr_add);            //时 
+ 00F6 04E8              ldi R16,132
+ 00F8 A5DF              xcall _ds1302_read_byte
+ 00FA A02E              mov R10,R16
+ 00FC A0920400          sts _time_buf+4,R10
+ 0100                   .dbline 135
+ 0100           ;       time_buf[5]=ds1302_read_byte(ds1302_min_add);           //分 
+ 0100 02E8              ldi R16,130
+ 0102 A0DF              xcall _ds1302_read_byte
+ 0104 A02E              mov R10,R16
+ 0106 A0920500          sts _time_buf+5,R10
+ 010A                   .dbline 136
+ 010A           ;       time_buf[6]=(ds1302_read_byte(ds1302_sec_add))&0x7F;//秒 
+ 010A 00E8              ldi R16,128
+ 010C 9BDF              xcall _ds1302_read_byte
+ 010E 402F              mov R20,R16
+ 0110 842F              mov R24,R20
+ 0112 8F77              andi R24,127
+ 0114 80930600          sts _time_buf+6,R24
+ 0118                   .dbline 137
+ 0118           ;       time_buf[7]=ds1302_read_byte(ds1302_day_add);           //周 
+ 0118 0AE8              ldi R16,138
+ 011A 94DF              xcall _ds1302_read_byte
+ 011C A02E              mov R10,R16
+ 011E A0920700          sts _time_buf+7,R10
+ 0122                   .dbline -2
+ 0122           L35:
+ 0122                   .dbline 0 ; func end
+ 0122 4991              ld R20,y+
+ 0124 A990              ld R10,y+
+ 0126 0895              ret
+ 0128                   .dbend
+ 0128                   .dbfunc e ds1302_init _ds1302_init fV
                         .even
- 0130           _ds1302_init::
- 0130                   .dbline -1
- 0130                   .dbline 145
- 0130           ; }
- 0130           ; 
- 0130           ; //***********************************************************************
- 0130           ; //               DS302初始化函数
- 0130           ; //***********************************************************************
- 0130           ; 
- 0130           ; void ds1302_init(void) 
- 0130           ; {
- 0130                   .dbline 147
- 0130           ;       
- 0130           ;       RST_CLR;                        //RST脚置低
- 0130 1F98              cbi 0x3,7
- 0132                   .dbline 148
- 0132           ;       SCK_CLR;                        //SCK脚置低
- 0132 1D98              cbi 0x3,5
- 0134                   .dbline 149
- 0134           ;       RST_OUT;                        //RST脚设置为输出
- 0134 179A              sbi 0x2,7
- 0136                   .dbline 150
- 0136           ;       SCK_OUT;                        //SCK脚设置为输出
- 0136 159A              sbi 0x2,5
- 0138                   .dbline -2
- 0138           L44:
- 0138                   .dbline 0 ; func end
- 0138 0895              ret
- 013A                   .dbend
- 013A                   .dbfunc e dayToChina _dayToChina fV
- 013A           ;            day -> R20
+ 0128           _ds1302_init::
+ 0128                   .dbline -1
+ 0128                   .dbline 145
+ 0128           ; }
+ 0128           ; 
+ 0128           ; //***********************************************************************
+ 0128           ; //               DS302初始化函数
+ 0128           ; //***********************************************************************
+ 0128           ; 
+ 0128           ; void ds1302_init(void) 
+ 0128           ; {
+ 0128                   .dbline 147
+ 0128           ;       
+ 0128           ;       RST_CLR;                        //RST脚置低
+ 0128 1F98              cbi 0x3,7
+ 012A                   .dbline 148
+ 012A           ;       SCK_CLR;                        //SCK脚置低
+ 012A 1D98              cbi 0x3,5
+ 012C                   .dbline 149
+ 012C           ;       RST_OUT;                        //RST脚设置为输出
+ 012C 179A              sbi 0x2,7
+ 012E                   .dbline 150
+ 012E           ;       SCK_OUT;                        //SCK脚设置为输出
+ 012E 159A              sbi 0x2,5
+ 0130                   .dbline -2
+ 0130           L43:
+ 0130                   .dbline 0 ; func end
+ 0130 0895              ret
+ 0132                   .dbend
+ 0132                   .dbfunc e dayToChina _dayToChina fV
+ 0132           ;            day -> R20
                         .even
- 013A           _dayToChina::
- 013A 4A93              st -y,R20
- 013C 402F              mov R20,R16
- 013E                   .dbline -1
- 013E                   .dbline 159
- 013E           ; }
- 013E           ; 
- 013E           ; 
- 013E           ; 
- 013E           ; //***********************************************************************
- 013E           ; //    数字周转中文周
- 013E           ; //***********************************************************************
- 013E           ; void dayToChina(unsigned char day)
- 013E           ; {
- 013E                   .dbline 160
- 013E           ;           if(day == 0x01)
- 013E 4130              cpi R20,1
- 0140 29F4              brne L46
- 0142           X8:
- 0142                   .dbline 161
- 0142           ;                       DisplayCgrom(0x86,"周一");
- 0142 20E0              ldi R18,<L48
- 0144 30E0              ldi R19,>L48
- 0146 06E8              ldi R16,134
- 0148 0E940000          xcall _DisplayCgrom
- 014C           L46:
- 014C                   .dbline 162
- 014C           ;               if(day == 0x02)
- 014C 4230              cpi R20,2
- 014E 29F4              brne L49
- 0150           X9:
- 0150                   .dbline 163
- 0150           ;                       DisplayCgrom(0x86,"周二");
- 0150 20E0              ldi R18,<L51
- 0152 30E0              ldi R19,>L51
- 0154 06E8              ldi R16,134
- 0156 0E940000          xcall _DisplayCgrom
- 015A           L49:
- 015A                   .dbline 164
- 015A           ;               if(day == 0x03)
- 015A 4330              cpi R20,3
- 015C 29F4              brne L52
- 015E           X10:
- 015E                   .dbline 165
- 015E           ;                       DisplayCgrom(0x86,"周三");
- 015E 20E0              ldi R18,<L54
- 0160 30E0              ldi R19,>L54
- 0162 06E8              ldi R16,134
- 0164 0E940000          xcall _DisplayCgrom
- 0168           L52:
- 0168                   .dbline 166
- 0168           ;               if(day == 0x04)
- 0168 4430              cpi R20,4
- 016A 29F4              brne L55
- 016C           X11:
- 016C                   .dbline 167
- 016C           ;                       DisplayCgrom(0x86,"周四");
- 016C 20E0              ldi R18,<L57
- 016E 30E0              ldi R19,>L57
- 0170 06E8              ldi R16,134
- 0172 0E940000          xcall _DisplayCgrom
- 0176           L55:
- 0176                   .dbline 168
- 0176           ;               if(day == 0x05)
- 0176 4530              cpi R20,5
- 0178 29F4              brne L58
- 017A           X12:
- 017A                   .dbline 169
- 017A           ;                       DisplayCgrom(0x86,"周五");
- 017A 20E0              ldi R18,<L60
- 017C 30E0              ldi R19,>L60
- 017E 06E8              ldi R16,134
- 0180 0E940000          xcall _DisplayCgrom
- 0184           L58:
- 0184                   .dbline 170
- 0184           ;               if(day == 0x06)
- 0184 4630              cpi R20,6
- 0186 29F4              brne L61
- 0188           X13:
- 0188                   .dbline 171
- 0188           ;                       DisplayCgrom(0x86,"周六");
- 0188 20E0              ldi R18,<L63
- 018A 30E0              ldi R19,>L63
- 018C 06E8              ldi R16,134
- 018E 0E940000          xcall _DisplayCgrom
- 0192           L61:
- 0192                   .dbline 172
- 0192           ;               if(day == 0x07)
- 0192 4730              cpi R20,7
- 0194 29F4              brne L64
- 0196           X14:
- 0196                   .dbline 173
- 0196           ;                       DisplayCgrom(0x86,"周日");
- 0196 20E0              ldi R18,<L66
- 0198 30E0              ldi R19,>L66
- 019A 06E8              ldi R16,134
- 019C 0E940000          xcall _DisplayCgrom
- 01A0           L64:
- 01A0                   .dbline -2
- 01A0           L45:
- 01A0                   .dbline 0 ; func end
- 01A0 4991              ld R20,y+
- 01A2 0895              ret
- 01A4                   .dbsym r day 20 c
- 01A4                   .dbend
- 01A4                   .dbfunc e displayDateTime _displayDateTime fV
- 01A4           ;           temp -> y+0
+ 0132           _dayToChina::
+ 0132 4A93              st -y,R20
+ 0134 402F              mov R20,R16
+ 0136                   .dbline -1
+ 0136                   .dbline 159
+ 0136           ; }
+ 0136           ; 
+ 0136           ; 
+ 0136           ; 
+ 0136           ; //***********************************************************************
+ 0136           ; //    数字周转中文周
+ 0136           ; //***********************************************************************
+ 0136           ; void dayToChina(unsigned char day)
+ 0136           ; {
+ 0136                   .dbline 160
+ 0136           ;           if(day == 0x01)
+ 0136 4130              cpi R20,1
+ 0138 29F4              brne L45
+ 013A           X8:
+ 013A                   .dbline 161
+ 013A           ;                       DisplayCgrom(0x86,"周一");
+ 013A 20E0              ldi R18,<L47
+ 013C 30E0              ldi R19,>L47
+ 013E 06E8              ldi R16,134
+ 0140 0E940000          xcall _DisplayCgrom
+ 0144           L45:
+ 0144                   .dbline 162
+ 0144           ;               if(day == 0x02)
+ 0144 4230              cpi R20,2
+ 0146 29F4              brne L48
+ 0148           X9:
+ 0148                   .dbline 163
+ 0148           ;                       DisplayCgrom(0x86,"周二");
+ 0148 20E0              ldi R18,<L50
+ 014A 30E0              ldi R19,>L50
+ 014C 06E8              ldi R16,134
+ 014E 0E940000          xcall _DisplayCgrom
+ 0152           L48:
+ 0152                   .dbline 164
+ 0152           ;               if(day == 0x03)
+ 0152 4330              cpi R20,3
+ 0154 29F4              brne L51
+ 0156           X10:
+ 0156                   .dbline 165
+ 0156           ;                       DisplayCgrom(0x86,"周三");
+ 0156 20E0              ldi R18,<L53
+ 0158 30E0              ldi R19,>L53
+ 015A 06E8              ldi R16,134
+ 015C 0E940000          xcall _DisplayCgrom
+ 0160           L51:
+ 0160                   .dbline 166
+ 0160           ;               if(day == 0x04)
+ 0160 4430              cpi R20,4
+ 0162 29F4              brne L54
+ 0164           X11:
+ 0164                   .dbline 167
+ 0164           ;                       DisplayCgrom(0x86,"周四");
+ 0164 20E0              ldi R18,<L56
+ 0166 30E0              ldi R19,>L56
+ 0168 06E8              ldi R16,134
+ 016A 0E940000          xcall _DisplayCgrom
+ 016E           L54:
+ 016E                   .dbline 168
+ 016E           ;               if(day == 0x05)
+ 016E 4530              cpi R20,5
+ 0170 29F4              brne L57
+ 0172           X12:
+ 0172                   .dbline 169
+ 0172           ;                       DisplayCgrom(0x86,"周五");
+ 0172 20E0              ldi R18,<L59
+ 0174 30E0              ldi R19,>L59
+ 0176 06E8              ldi R16,134
+ 0178 0E940000          xcall _DisplayCgrom
+ 017C           L57:
+ 017C                   .dbline 170
+ 017C           ;               if(day == 0x06)
+ 017C 4630              cpi R20,6
+ 017E 29F4              brne L60
+ 0180           X13:
+ 0180                   .dbline 171
+ 0180           ;                       DisplayCgrom(0x86,"周六");
+ 0180 20E0              ldi R18,<L62
+ 0182 30E0              ldi R19,>L62
+ 0184 06E8              ldi R16,134
+ 0186 0E940000          xcall _DisplayCgrom
+ 018A           L60:
+ 018A                   .dbline 172
+ 018A           ;               if(day == 0x07)
+ 018A 4730              cpi R20,7
+ 018C 29F4              brne L63
+ 018E           X14:
+ 018E                   .dbline 173
+ 018E           ;                       DisplayCgrom(0x86,"周日");
+ 018E 20E0              ldi R18,<L65
+ 0190 30E0              ldi R19,>L65
+ 0192 06E8              ldi R16,134
+ 0194 0E940000          xcall _DisplayCgrom
+ 0198           L63:
+ 0198                   .dbline -2
+ 0198           L44:
+ 0198                   .dbline 0 ; func end
+ 0198 4991              ld R20,y+
+ 019A 0895              ret
+ 019C                   .dbsym r day 20 c
+ 019C                   .dbend
+ 019C                   .dbfunc e displayDateTime _displayDateTime fV
+ 019C           ;           temp -> y+0
                         .even
- 01A4           _displayDateTime::
- 01A4 2197              sbiw R28,1
- 01A6                   .dbline -1
- 01A6                   .dbline 180
- 01A6           ; }
- 01A6           ; 
- 01A6           ; //***********************************************************************
- 01A6           ; //    显示系统时间 年月日、星期
- 01A6           ; //***********************************************************************
- 01A6           ; void displayDateTime(void)
- 01A6           ; {
- 01A6                   .dbline 182
- 01A6           ;       volatile unsigned char temp;
- 01A6           ;     delay_nms(200);
- 01A6 08EC              ldi R16,200
- 01A8 10E0              ldi R17,0
- 01AA 0E940000          xcall _delay_nms
- 01AE                   .dbline 183
- 01AE           ;       ds1302_read_time();                               //读DS1302数据
- 01AE 98DF              xcall _ds1302_read_time
- 01B0                   .dbline 185
- 01B0           ;               
- 01B0           ;       LCD_write_com(0x80);
- 01B0 00E8              ldi R16,128
- 01B2 0E940000          xcall _LCD_write_com
- 01B6                   .dbline 186
- 01B6           ;       delay_nms(2);
- 01B6 02E0              ldi R16,2
- 01B8 10E0              ldi R17,0
- 01BA 0E940000          xcall _delay_nms
- 01BE                   .dbline 187
- 01BE           ;     temp = (time_buf[0] >> 4) + '0';          //在LCD上写要显示的数据 
- 01BE 80910000          lds R24,_time_buf
- 01C2 8295              swap R24
- 01C4 8F70              andi R24,#0x0F
- 01C6 805D              subi R24,208    ; addi 48
- 01C8 8883              std y+0,R24
- 01CA                   .dbline 188
- 01CA           ;     LCD_write_data(temp);
- 01CA 082F              mov R16,R24
- 01CC 0E940000          xcall _LCD_write_data
- 01D0                   .dbline 189
- 01D0           ;       delay_nms(2);
- 01D0 02E0              ldi R16,2
- 01D2 10E0              ldi R17,0
- 01D4 0E940000          xcall _delay_nms
- 01D8                   .dbline 190
- 01D8           ;       temp = (time_buf[0] & 0x0F) + '0';      
- 01D8 80910000          lds R24,_time_buf
- 01DC 8F70              andi R24,15
- 01DE 805D              subi R24,208    ; addi 48
- 01E0 8883              std y+0,R24
- 01E2                   .dbline 191
- 01E2           ;       LCD_write_data(temp);
- 01E2 082F              mov R16,R24
- 01E4 0E940000          xcall _LCD_write_data
- 01E8                   .dbline 192
- 01E8           ;       delay_nms(2);
- 01E8 02E0              ldi R16,2
- 01EA 10E0              ldi R17,0
- 01EC 0E940000          xcall _delay_nms
- 01F0                   .dbline 193
- 01F0           ;       temp = (time_buf[1] >> 4) + '0';                
- 01F0 80910100          lds R24,_time_buf+1
- 01F4 8295              swap R24
- 01F6 8F70              andi R24,#0x0F
- 01F8 805D              subi R24,208    ; addi 48
- 01FA 8883              std y+0,R24
- 01FC                   .dbline 194
- 01FC           ;     LCD_write_data(temp);
- 01FC 082F              mov R16,R24
- 01FE 0E940000          xcall _LCD_write_data
- 0202                   .dbline 195
- 0202           ;       delay_nms(2);
- 0202 02E0              ldi R16,2
- 0204 10E0              ldi R17,0
- 0206 0E940000          xcall _delay_nms
- 020A                   .dbline 197
- 020A           ;                
- 020A           ;       temp = (time_buf[1] & 0x0F) + '0';
- 020A 80910100          lds R24,_time_buf+1
- 020E 8F70              andi R24,15
- 0210 805D              subi R24,208    ; addi 48
- 0212 8883              std y+0,R24
- 0214                   .dbline 198
- 0214           ;       LCD_write_data(temp);
- 0214 082F              mov R16,R24
- 0216 0E940000          xcall _LCD_write_data
- 021A                   .dbline 199
- 021A           ;       delay_nms(2);
- 021A 02E0              ldi R16,2
- 021C 10E0              ldi R17,0
- 021E 0E940000          xcall _delay_nms
- 0222                   .dbline 200
- 0222           ;       LCD_write_data('-');
- 0222 0DE2              ldi R16,45
- 0224 0E940000          xcall _LCD_write_data
- 0228                   .dbline 201
- 0228           ;       delay_nms(2);
- 0228 02E0              ldi R16,2
- 022A 10E0              ldi R17,0
- 022C 0E940000          xcall _delay_nms
- 0230                   .dbline 203
- 0230           ; 
- 0230           ;       temp = (time_buf[2] >> 4) + '0';                
- 0230 80910200          lds R24,_time_buf+2
- 0234 8295              swap R24
- 0236 8F70              andi R24,#0x0F
- 0238 805D              subi R24,208    ; addi 48
- 023A 8883              std y+0,R24
- 023C                   .dbline 204
- 023C           ;     LCD_write_data(temp);
- 023C 082F              mov R16,R24
- 023E 0E940000          xcall _LCD_write_data
- 0242                   .dbline 205
- 0242           ;       delay_nms(2);
- 0242 02E0              ldi R16,2
- 0244 10E0              ldi R17,0
- 0246 0E940000          xcall _delay_nms
- 024A                   .dbline 206
- 024A           ;       temp = (time_buf[2] & 0x0F) + '0';
- 024A 80910200          lds R24,_time_buf+2
- 024E 8F70              andi R24,15
- 0250 805D              subi R24,208    ; addi 48
- 0252 8883              std y+0,R24
- 0254                   .dbline 207
- 0254           ;       LCD_write_data(temp);
- 0254 082F              mov R16,R24
- 0256 0E940000          xcall _LCD_write_data
- 025A                   .dbline 208
- 025A           ;       delay_nms(2);
- 025A 02E0              ldi R16,2
- 025C 10E0              ldi R17,0
- 025E 0E940000          xcall _delay_nms
- 0262                   .dbline 209
- 0262           ;       LCD_write_data('-');
- 0262 0DE2              ldi R16,45
- 0264 0E940000          xcall _LCD_write_data
- 0268                   .dbline 210
- 0268           ;       delay_nms(2);
- 0268 02E0              ldi R16,2
- 026A 10E0              ldi R17,0
- 026C 0E940000          xcall _delay_nms
- 0270                   .dbline 212
- 0270           ; 
- 0270           ;       temp = (time_buf[3] >> 4) + '0';                
- 0270 80910300          lds R24,_time_buf+3
- 0274 8295              swap R24
- 0276 8F70              andi R24,#0x0F
- 0278 805D              subi R24,208    ; addi 48
- 027A 8883              std y+0,R24
- 027C                   .dbline 213
- 027C           ;     LCD_write_data(temp);
- 027C 082F              mov R16,R24
- 027E 0E940000          xcall _LCD_write_data
- 0282                   .dbline 214
- 0282           ;       delay_nms(2);
- 0282 02E0              ldi R16,2
- 0284 10E0              ldi R17,0
- 0286 0E940000          xcall _delay_nms
- 028A                   .dbline 215
- 028A           ;       temp = (time_buf[3] & 0x0F) + '0';
- 028A 80910300          lds R24,_time_buf+3
- 028E 8F70              andi R24,15
- 0290 805D              subi R24,208    ; addi 48
- 0292 8883              std y+0,R24
- 0294                   .dbline 216
- 0294           ;       LCD_write_data(temp);
- 0294 082F              mov R16,R24
- 0296 0E940000          xcall _LCD_write_data
- 029A                   .dbline 217
- 029A           ;       delay_nms(2);
- 029A 02E0              ldi R16,2
- 029C 10E0              ldi R17,0
- 029E 0E940000          xcall _delay_nms
- 02A2                   .dbline 220
- 02A2           ;               
- 02A2           ;       //显示星期
- 02A2           ;       dayToChina(time_buf[7]);
- 02A2 00910700          lds R16,_time_buf+7
- 02A6 49DF              xcall _dayToChina
- 02A8                   .dbline 221
- 02A8           ;       delay_nms(2);
- 02A8 02E0              ldi R16,2
- 02AA 10E0              ldi R17,0
- 02AC 0E940000          xcall _delay_nms
- 02B0                   .dbline 224
- 02B0           ;               
- 02B0           ; 
- 02B0           ;       LCD_write_com(0x90);
- 02B0 00E9              ldi R16,144
- 02B2 0E940000          xcall _LCD_write_com
- 02B6                   .dbline 225
- 02B6           ;       delay_nms(5);
- 02B6 05E0              ldi R16,5
- 02B8 10E0              ldi R17,0
- 02BA 0E940000          xcall _delay_nms
- 02BE                   .dbline 227
- 02BE           ; 
- 02BE           ;       temp = (time_buf[4] >> 4) + '0';                
- 02BE 80910400          lds R24,_time_buf+4
- 02C2 8295              swap R24
- 02C4 8F70              andi R24,#0x0F
- 02C6 805D              subi R24,208    ; addi 48
- 02C8 8883              std y+0,R24
- 02CA                   .dbline 228
- 02CA           ;     LCD_write_data(temp);
- 02CA 082F              mov R16,R24
- 02CC 0E940000          xcall _LCD_write_data
- 02D0                   .dbline 229
- 02D0           ;       delay_nms(2);
- 02D0 02E0              ldi R16,2
- 02D2 10E0              ldi R17,0
- 02D4 0E940000          xcall _delay_nms
- 02D8                   .dbline 230
- 02D8           ;       temp = (time_buf[4] & 0x0F) + '0';
- 02D8 80910400          lds R24,_time_buf+4
- 02DC 8F70              andi R24,15
- 02DE 805D              subi R24,208    ; addi 48
- 02E0 8883              std y+0,R24
- 02E2                   .dbline 231
- 02E2           ;       LCD_write_data(temp);
- 02E2 082F              mov R16,R24
- 02E4 0E940000          xcall _LCD_write_data
- 02E8                   .dbline 232
- 02E8           ;       delay_nms(2);
- 02E8 02E0              ldi R16,2
- 02EA 10E0              ldi R17,0
- 02EC 0E940000          xcall _delay_nms
- 02F0                   .dbline 233
- 02F0           ;       LCD_write_data(':');
- 02F0 0AE3              ldi R16,58
- 02F2 0E940000          xcall _LCD_write_data
- 02F6                   .dbline 234
- 02F6           ;       delay_nms(2);
- 02F6 02E0              ldi R16,2
- 02F8 10E0              ldi R17,0
- 02FA 0E940000          xcall _delay_nms
- 02FE                   .dbline 236
- 02FE           ; 
- 02FE           ;       temp = (time_buf[5] >> 4) + '0';                
- 02FE 80910500          lds R24,_time_buf+5
- 0302 8295              swap R24
- 0304 8F70              andi R24,#0x0F
- 0306 805D              subi R24,208    ; addi 48
- 0308 8883              std y+0,R24
- 030A                   .dbline 237
- 030A           ;     LCD_write_data(temp);
- 030A 082F              mov R16,R24
- 030C 0E940000          xcall _LCD_write_data
- 0310                   .dbline 238
- 0310           ;       delay_nms(2);
- 0310 02E0              ldi R16,2
- 0312 10E0              ldi R17,0
- 0314 0E940000          xcall _delay_nms
- 0318                   .dbline 239
- 0318           ;       temp = (time_buf[5] & 0x0F) + '0';
- 0318 80910500          lds R24,_time_buf+5
- 031C 8F70              andi R24,15
- 031E 805D              subi R24,208    ; addi 48
- 0320 8883              std y+0,R24
- 0322                   .dbline 240
- 0322           ;       LCD_write_data(temp);
- 0322 082F              mov R16,R24
- 0324 0E940000          xcall _LCD_write_data
- 0328                   .dbline 241
- 0328           ;       delay_nms(2);
- 0328 02E0              ldi R16,2
- 032A 10E0              ldi R17,0
- 032C 0E940000          xcall _delay_nms
- 0330                   .dbline 242
- 0330           ;       LCD_write_data(':');
- 0330 0AE3              ldi R16,58
- 0332 0E940000          xcall _LCD_write_data
- 0336                   .dbline 243
- 0336           ;       delay_nms(2);
- 0336 02E0              ldi R16,2
- 0338 10E0              ldi R17,0
- 033A 0E940000          xcall _delay_nms
- 033E                   .dbline 245
- 033E           ; 
- 033E           ;       temp = (time_buf[6] >> 4) + '0';                
- 033E 80910600          lds R24,_time_buf+6
- 0342 8295              swap R24
- 0344 8F70              andi R24,#0x0F
- 0346 805D              subi R24,208    ; addi 48
- 0348 8883              std y+0,R24
- 034A                   .dbline 246
- 034A           ;     LCD_write_data(temp);
- 034A 082F              mov R16,R24
- 034C 0E940000          xcall _LCD_write_data
- 0350                   .dbline 247
- 0350           ;       delay_nms(2);
- 0350 02E0              ldi R16,2
- 0352 10E0              ldi R17,0
- 0354 0E940000          xcall _delay_nms
- 0358                   .dbline 248
- 0358           ;       temp = (time_buf[6] & 0x0F) + '0';
- 0358 80910600          lds R24,_time_buf+6
- 035C 8F70              andi R24,15
- 035E 805D              subi R24,208    ; addi 48
- 0360 8883              std y+0,R24
- 0362                   .dbline 249
- 0362           ;       LCD_write_data(temp);
- 0362 082F              mov R16,R24
- 0364 0E940000          xcall _LCD_write_data
- 0368                   .dbline 250
- 0368           ;       delay_nms(2);
- 0368 02E0              ldi R16,2
- 036A 10E0              ldi R17,0
- 036C 0E940000          xcall _delay_nms
- 0370                   .dbline -2
- 0370           L67:
- 0370                   .dbline 0 ; func end
- 0370 2196              adiw R28,1
- 0372 0895              ret
- 0374                   .dbsym l temp 0 c
- 0374                   .dbend
+ 019C           _displayDateTime::
+ 019C 2197              sbiw R28,1
+ 019E                   .dbline -1
+ 019E                   .dbline 180
+ 019E           ; }
+ 019E           ; 
+ 019E           ; //***********************************************************************
+ 019E           ; //    显示系统时间 年月日、星期
+ 019E           ; //***********************************************************************
+ 019E           ; void displayDateTime(void)
+ 019E           ; {
+ 019E                   .dbline 182
+ 019E           ;       volatile unsigned char temp;
+ 019E           ;     delay_nms(200);
+ 019E 08EC              ldi R16,200
+ 01A0 10E0              ldi R17,0
+ 01A2 0E940000          xcall _delay_nms
+ 01A6                   .dbline 183
+ 01A6           ;       ds1302_read_time();                               //读DS1302数据
+ 01A6 98DF              xcall _ds1302_read_time
+ 01A8                   .dbline 185
+ 01A8           ;               
+ 01A8           ;       LCD_write_com(0x80);
+ 01A8 00E8              ldi R16,128
+ 01AA 0E940000          xcall _LCD_write_com
+ 01AE                   .dbline 186
+ 01AE           ;       delay_nms(2);
+ 01AE 02E0              ldi R16,2
+ 01B0 10E0              ldi R17,0
+ 01B2 0E940000          xcall _delay_nms
+ 01B6                   .dbline 187
+ 01B6           ;     temp = (time_buf[0] >> 4) + '0';          //在LCD上写要显示的数据 
+ 01B6 80910000          lds R24,_time_buf
+ 01BA 8295              swap R24
+ 01BC 8F70              andi R24,#0x0F
+ 01BE 805D              subi R24,208    ; addi 48
+ 01C0 8883              std y+0,R24
+ 01C2                   .dbline 188
+ 01C2           ;     LCD_write_data(temp);
+ 01C2 082F              mov R16,R24
+ 01C4 0E940000          xcall _LCD_write_data
+ 01C8                   .dbline 189
+ 01C8           ;       delay_nms(2);
+ 01C8 02E0              ldi R16,2
+ 01CA 10E0              ldi R17,0
+ 01CC 0E940000          xcall _delay_nms
+ 01D0                   .dbline 190
+ 01D0           ;       temp = (time_buf[0] & 0x0F) + '0';      
+ 01D0 80910000          lds R24,_time_buf
+ 01D4 8F70              andi R24,15
+ 01D6 805D              subi R24,208    ; addi 48
+ 01D8 8883              std y+0,R24
+ 01DA                   .dbline 191
+ 01DA           ;       LCD_write_data(temp);
+ 01DA 082F              mov R16,R24
+ 01DC 0E940000          xcall _LCD_write_data
+ 01E0                   .dbline 192
+ 01E0           ;       delay_nms(2);
+ 01E0 02E0              ldi R16,2
+ 01E2 10E0              ldi R17,0
+ 01E4 0E940000          xcall _delay_nms
+ 01E8                   .dbline 193
+ 01E8           ;       temp = (time_buf[1] >> 4) + '0';                
+ 01E8 80910100          lds R24,_time_buf+1
+ 01EC 8295              swap R24
+ 01EE 8F70              andi R24,#0x0F
+ 01F0 805D              subi R24,208    ; addi 48
+ 01F2 8883              std y+0,R24
+ 01F4                   .dbline 194
+ 01F4           ;     LCD_write_data(temp);
+ 01F4 082F              mov R16,R24
+ 01F6 0E940000          xcall _LCD_write_data
+ 01FA                   .dbline 195
+ 01FA           ;       delay_nms(2);
+ 01FA 02E0              ldi R16,2
+ 01FC 10E0              ldi R17,0
+ 01FE 0E940000          xcall _delay_nms
+ 0202                   .dbline 197
+ 0202           ;                
+ 0202           ;       temp = (time_buf[1] & 0x0F) + '0';
+ 0202 80910100          lds R24,_time_buf+1
+ 0206 8F70              andi R24,15
+ 0208 805D              subi R24,208    ; addi 48
+ 020A 8883              std y+0,R24
+ 020C                   .dbline 198
+ 020C           ;       LCD_write_data(temp);
+ 020C 082F              mov R16,R24
+ 020E 0E940000          xcall _LCD_write_data
+ 0212                   .dbline 199
+ 0212           ;       delay_nms(2);
+ 0212 02E0              ldi R16,2
+ 0214 10E0              ldi R17,0
+ 0216 0E940000          xcall _delay_nms
+ 021A                   .dbline 200
+ 021A           ;       LCD_write_data('-');
+ 021A 0DE2              ldi R16,45
+ 021C 0E940000          xcall _LCD_write_data
+ 0220                   .dbline 201
+ 0220           ;       delay_nms(2);
+ 0220 02E0              ldi R16,2
+ 0222 10E0              ldi R17,0
+ 0224 0E940000          xcall _delay_nms
+ 0228                   .dbline 203
+ 0228           ; 
+ 0228           ;       temp = (time_buf[2] >> 4) + '0';                
+ 0228 80910200          lds R24,_time_buf+2
+ 022C 8295              swap R24
+ 022E 8F70              andi R24,#0x0F
+ 0230 805D              subi R24,208    ; addi 48
+ 0232 8883              std y+0,R24
+ 0234                   .dbline 204
+ 0234           ;     LCD_write_data(temp);
+ 0234 082F              mov R16,R24
+ 0236 0E940000          xcall _LCD_write_data
+ 023A                   .dbline 205
+ 023A           ;       delay_nms(2);
+ 023A 02E0              ldi R16,2
+ 023C 10E0              ldi R17,0
+ 023E 0E940000          xcall _delay_nms
+ 0242                   .dbline 206
+ 0242           ;       temp = (time_buf[2] & 0x0F) + '0';
+ 0242 80910200          lds R24,_time_buf+2
+ 0246 8F70              andi R24,15
+ 0248 805D              subi R24,208    ; addi 48
+ 024A 8883              std y+0,R24
+ 024C                   .dbline 207
+ 024C           ;       LCD_write_data(temp);
+ 024C 082F              mov R16,R24
+ 024E 0E940000          xcall _LCD_write_data
+ 0252                   .dbline 208
+ 0252           ;       delay_nms(2);
+ 0252 02E0              ldi R16,2
+ 0254 10E0              ldi R17,0
+ 0256 0E940000          xcall _delay_nms
+ 025A                   .dbline 209
+ 025A           ;       LCD_write_data('-');
+ 025A 0DE2              ldi R16,45
+ 025C 0E940000          xcall _LCD_write_data
+ 0260                   .dbline 210
+ 0260           ;       delay_nms(2);
+ 0260 02E0              ldi R16,2
+ 0262 10E0              ldi R17,0
+ 0264 0E940000          xcall _delay_nms
+ 0268                   .dbline 212
+ 0268           ; 
+ 0268           ;       temp = (time_buf[3] >> 4) + '0';                
+ 0268 80910300          lds R24,_time_buf+3
+ 026C 8295              swap R24
+ 026E 8F70              andi R24,#0x0F
+ 0270 805D              subi R24,208    ; addi 48
+ 0272 8883              std y+0,R24
+ 0274                   .dbline 213
+ 0274           ;     LCD_write_data(temp);
+ 0274 082F              mov R16,R24
+ 0276 0E940000          xcall _LCD_write_data
+ 027A                   .dbline 214
+ 027A           ;       delay_nms(2);
+ 027A 02E0              ldi R16,2
+ 027C 10E0              ldi R17,0
+ 027E 0E940000          xcall _delay_nms
+ 0282                   .dbline 215
+ 0282           ;       temp = (time_buf[3] & 0x0F) + '0';
+ 0282 80910300          lds R24,_time_buf+3
+ 0286 8F70              andi R24,15
+ 0288 805D              subi R24,208    ; addi 48
+ 028A 8883              std y+0,R24
+ 028C                   .dbline 216
+ 028C           ;       LCD_write_data(temp);
+ 028C 082F              mov R16,R24
+ 028E 0E940000          xcall _LCD_write_data
+ 0292                   .dbline 217
+ 0292           ;       delay_nms(2);
+ 0292 02E0              ldi R16,2
+ 0294 10E0              ldi R17,0
+ 0296 0E940000          xcall _delay_nms
+ 029A                   .dbline 220
+ 029A           ;               
+ 029A           ;       //显示星期
+ 029A           ;       dayToChina(time_buf[7]);
+ 029A 00910700          lds R16,_time_buf+7
+ 029E 49DF              xcall _dayToChina
+ 02A0                   .dbline 221
+ 02A0           ;       delay_nms(2);
+ 02A0 02E0              ldi R16,2
+ 02A2 10E0              ldi R17,0
+ 02A4 0E940000          xcall _delay_nms
+ 02A8                   .dbline 224
+ 02A8           ;               
+ 02A8           ; 
+ 02A8           ;       LCD_write_com(0x90);
+ 02A8 00E9              ldi R16,144
+ 02AA 0E940000          xcall _LCD_write_com
+ 02AE                   .dbline 225
+ 02AE           ;       delay_nms(5);
+ 02AE 05E0              ldi R16,5
+ 02B0 10E0              ldi R17,0
+ 02B2 0E940000          xcall _delay_nms
+ 02B6                   .dbline 227
+ 02B6           ; 
+ 02B6           ;       temp = (time_buf[4] >> 4) + '0';                
+ 02B6 80910400          lds R24,_time_buf+4
+ 02BA 8295              swap R24
+ 02BC 8F70              andi R24,#0x0F
+ 02BE 805D              subi R24,208    ; addi 48
+ 02C0 8883              std y+0,R24
+ 02C2                   .dbline 228
+ 02C2           ;     LCD_write_data(temp);
+ 02C2 082F              mov R16,R24
+ 02C4 0E940000          xcall _LCD_write_data
+ 02C8                   .dbline 229
+ 02C8           ;       delay_nms(2);
+ 02C8 02E0              ldi R16,2
+ 02CA 10E0              ldi R17,0
+ 02CC 0E940000          xcall _delay_nms
+ 02D0                   .dbline 230
+ 02D0           ;       temp = (time_buf[4] & 0x0F) + '0';
+ 02D0 80910400          lds R24,_time_buf+4
+ 02D4 8F70              andi R24,15
+ 02D6 805D              subi R24,208    ; addi 48
+ 02D8 8883              std y+0,R24
+ 02DA                   .dbline 231
+ 02DA           ;       LCD_write_data(temp);
+ 02DA 082F              mov R16,R24
+ 02DC 0E940000          xcall _LCD_write_data
+ 02E0                   .dbline 232
+ 02E0           ;       delay_nms(2);
+ 02E0 02E0              ldi R16,2
+ 02E2 10E0              ldi R17,0
+ 02E4 0E940000          xcall _delay_nms
+ 02E8                   .dbline 233
+ 02E8           ;       LCD_write_data(':');
+ 02E8 0AE3              ldi R16,58
+ 02EA 0E940000          xcall _LCD_write_data
+ 02EE                   .dbline 234
+ 02EE           ;       delay_nms(2);
+ 02EE 02E0              ldi R16,2
+ 02F0 10E0              ldi R17,0
+ 02F2 0E940000          xcall _delay_nms
+ 02F6                   .dbline 236
+ 02F6           ; 
+ 02F6           ;       temp = (time_buf[5] >> 4) + '0';                
+ 02F6 80910500          lds R24,_time_buf+5
+ 02FA 8295              swap R24
+ 02FC 8F70              andi R24,#0x0F
+ 02FE 805D              subi R24,208    ; addi 48
+ 0300 8883              std y+0,R24
+ 0302                   .dbline 237
+ 0302           ;     LCD_write_data(temp);
+ 0302 082F              mov R16,R24
+ 0304 0E940000          xcall _LCD_write_data
+ 0308                   .dbline 238
+ 0308           ;       delay_nms(2);
+ 0308 02E0              ldi R16,2
+ 030A 10E0              ldi R17,0
+ 030C 0E940000          xcall _delay_nms
+ 0310                   .dbline 239
+ 0310           ;       temp = (time_buf[5] & 0x0F) + '0';
+ 0310 80910500          lds R24,_time_buf+5
+ 0314 8F70              andi R24,15
+ 0316 805D              subi R24,208    ; addi 48
+ 0318 8883              std y+0,R24
+ 031A                   .dbline 240
+ 031A           ;       LCD_write_data(temp);
+ 031A 082F              mov R16,R24
+ 031C 0E940000          xcall _LCD_write_data
+ 0320                   .dbline 241
+ 0320           ;       delay_nms(2);
+ 0320 02E0              ldi R16,2
+ 0322 10E0              ldi R17,0
+ 0324 0E940000          xcall _delay_nms
+ 0328                   .dbline 242
+ 0328           ;       LCD_write_data(':');
+ 0328 0AE3              ldi R16,58
+ 032A 0E940000          xcall _LCD_write_data
+ 032E                   .dbline 243
+ 032E           ;       delay_nms(2);
+ 032E 02E0              ldi R16,2
+ 0330 10E0              ldi R17,0
+ 0332 0E940000          xcall _delay_nms
+ 0336                   .dbline 245
+ 0336           ; 
+ 0336           ;       temp = (time_buf[6] >> 4) + '0';                
+ 0336 80910600          lds R24,_time_buf+6
+ 033A 8295              swap R24
+ 033C 8F70              andi R24,#0x0F
+ 033E 805D              subi R24,208    ; addi 48
+ 0340 8883              std y+0,R24
+ 0342                   .dbline 246
+ 0342           ;     LCD_write_data(temp);
+ 0342 082F              mov R16,R24
+ 0344 0E940000          xcall _LCD_write_data
+ 0348                   .dbline 247
+ 0348           ;       delay_nms(2);
+ 0348 02E0              ldi R16,2
+ 034A 10E0              ldi R17,0
+ 034C 0E940000          xcall _delay_nms
+ 0350                   .dbline 248
+ 0350           ;       temp = (time_buf[6] & 0x0F) + '0';
+ 0350 80910600          lds R24,_time_buf+6
+ 0354 8F70              andi R24,15
+ 0356 805D              subi R24,208    ; addi 48
+ 0358 8883              std y+0,R24
+ 035A                   .dbline 249
+ 035A           ;       LCD_write_data(temp);
+ 035A 082F              mov R16,R24
+ 035C 0E940000          xcall _LCD_write_data
+ 0360                   .dbline 250
+ 0360           ;       delay_nms(2);
+ 0360 02E0              ldi R16,2
+ 0362 10E0              ldi R17,0
+ 0364 0E940000          xcall _delay_nms
+ 0368                   .dbline -2
+ 0368           L66:
+ 0368                   .dbline 0 ; func end
+ 0368 2196              adiw R28,1
+ 036A 0895              ret
+ 036C                   .dbsym l temp 0 c
+ 036C                   .dbend
                         .area data(ram, con, rel)
- 0008                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 0008           L66:
- 0008                   .blkb 5
+ 0008                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0008           L81:
+ 0008                   .blkb 2
                         .area idata
- 0008 D6DCC8D500        .byte 214,220,200,213,0
+ 0008 0000              .byte 0,0
                         .area data(ram, con, rel)
- 000D                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 000D           L63:
- 000D                   .blkb 5
+ 000A                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 000A                   .blkb 19
                         .area idata
- 000D D6DCC1F900        .byte 214,220,193,249,0
+ 000A 00000000000000000000      .word 0,0,0,0,0
+ 0014 000000000000000000        .byte 0,0,0,0,0,0,0,0,0
                         .area data(ram, con, rel)
- 0012                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 0012           L60:
- 0012                   .blkb 5
+ 001D                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+                        .area text(rom, con, rel)
+ 036C                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 036C                   .dbfunc e Timetostr _Timetostr fpc
+ 036C           ;            str -> y+0
+                        .even
+ 036C           _Timetostr::
+ 036C 6597              sbiw R28,21
+ 036E                   .dbline -1
+ 036E                   .dbline 255
+ 036E           ; }
+ 036E           ; 
+ 036E           ; //读取时间，保存到字符串数组中
+ 036E           ; unsigned char* Timetostr(void)
+ 036E           ; {
+ 036E                   .dbline 256
+ 036E           ;       unsigned char str[21]="\0";                                                        //时间字符串数组
+ 036E 80E0              ldi R24,<L81
+ 0370 90E0              ldi R25,>L81
+ 0372 FE01              movw R30,R28
+ 0374 05E1              ldi R16,21
+ 0376 10E0              ldi R17,0
+ 0378 FA93              st -y,R31
+ 037A EA93              st -y,R30
+ 037C 9A93              st -y,R25
+ 037E 8A93              st -y,R24
+ 0380 0E940000          xcall asgnblk
+ 0384                   .dbline 257
+ 0384           ;       ds1302_read_time();                                             //读DS1302数据
+ 0384 A9DE              xcall _ds1302_read_time
+ 0386                   .dbline 258
+ 0386           ;       str[0] = (time_buf[0] >> 4) + '0';
+ 0386 80910000          lds R24,_time_buf
+ 038A 8295              swap R24
+ 038C 8F70              andi R24,#0x0F
+ 038E 805D              subi R24,208    ; addi 48
+ 0390 8883              std y+0,R24
+ 0392                   .dbline 259
+ 0392           ;       str[1] = (time_buf[0] & 0x0f) + '0';
+ 0392 80910000          lds R24,_time_buf
+ 0396 8F70              andi R24,15
+ 0398 805D              subi R24,208    ; addi 48
+ 039A 8983              std y+1,R24
+ 039C                   .dbline 260
+ 039C           ;       str[2] = (time_buf[1] >> 4) + '0';
+ 039C 80910100          lds R24,_time_buf+1
+ 03A0 8295              swap R24
+ 03A2 8F70              andi R24,#0x0F
+ 03A4 805D              subi R24,208    ; addi 48
+ 03A6 8A83              std y+2,R24
+ 03A8                   .dbline 261
+ 03A8           ;       str[3] = (time_buf[1] & 0x0f) + '0';
+ 03A8 80910100          lds R24,_time_buf+1
+ 03AC 8F70              andi R24,15
+ 03AE 805D              subi R24,208    ; addi 48
+ 03B0 8B83              std y+3,R24
+ 03B2                   .dbline 262
+ 03B2           ;       str[4] = '-';
+ 03B2 8DE2              ldi R24,45
+ 03B4 8C83              std y+4,R24
+ 03B6                   .dbline 263
+ 03B6           ;       str[5] = (time_buf[2] >> 4) + '0';
+ 03B6 80910200          lds R24,_time_buf+2
+ 03BA 8295              swap R24
+ 03BC 8F70              andi R24,#0x0F
+ 03BE 805D              subi R24,208    ; addi 48
+ 03C0 8D83              std y+5,R24
+ 03C2                   .dbline 264
+ 03C2           ;       str[6] = (time_buf[2] & 0x0f) + '0';
+ 03C2 80910200          lds R24,_time_buf+2
+ 03C6 8F70              andi R24,15
+ 03C8 805D              subi R24,208    ; addi 48
+ 03CA 8E83              std y+6,R24
+ 03CC                   .dbline 265
+ 03CC           ;       str[7] = '-';
+ 03CC 8DE2              ldi R24,45
+ 03CE 8F83              std y+7,R24
+ 03D0                   .dbline 266
+ 03D0           ;       str[8]= (time_buf[3] >> 4) + '0';
+ 03D0 80910300          lds R24,_time_buf+3
+ 03D4 8295              swap R24
+ 03D6 8F70              andi R24,#0x0F
+ 03D8 805D              subi R24,208    ; addi 48
+ 03DA 8887              std y+8,R24
+ 03DC                   .dbline 267
+ 03DC           ;       str[9] = (time_buf[3] & 0x0f) + '0';
+ 03DC 80910300          lds R24,_time_buf+3
+ 03E0 8F70              andi R24,15
+ 03E2 805D              subi R24,208    ; addi 48
+ 03E4 8987              std y+9,R24
+ 03E6                   .dbline 268
+ 03E6           ;       str[10] = ' '; str[11] = ' ';
+ 03E6 80E2              ldi R24,32
+ 03E8 8A87              std y+10,R24
+ 03EA                   .dbline 268
+ 03EA 8B87              std y+11,R24
+ 03EC                   .dbline 269
+ 03EC           ;       str[12]= (time_buf[4] >> 4) + '0';
+ 03EC 80910400          lds R24,_time_buf+4
+ 03F0 8295              swap R24
+ 03F2 8F70              andi R24,#0x0F
+ 03F4 805D              subi R24,208    ; addi 48
+ 03F6 8C87              std y+12,R24
+ 03F8                   .dbline 270
+ 03F8           ;       str[13] = (time_buf[4] & 0x0f) + '0';
+ 03F8 80910400          lds R24,_time_buf+4
+ 03FC 8F70              andi R24,15
+ 03FE 805D              subi R24,208    ; addi 48
+ 0400 8D87              std y+13,R24
+ 0402                   .dbline 271
+ 0402           ;       str[14] = ':';
+ 0402 8AE3              ldi R24,58
+ 0404 8E87              std y+14,R24
+ 0406                   .dbline 272
+ 0406           ;       str[15] = (time_buf[5] >> 4) + '0';
+ 0406 80910500          lds R24,_time_buf+5
+ 040A 8295              swap R24
+ 040C 8F70              andi R24,#0x0F
+ 040E 805D              subi R24,208    ; addi 48
+ 0410 8F87              std y+15,R24
+ 0412                   .dbline 273
+ 0412           ;       str[16] = (time_buf[5] & 0x0f) + '0';
+ 0412 80910500          lds R24,_time_buf+5
+ 0416 8F70              andi R24,15
+ 0418 805D              subi R24,208    ; addi 48
+ 041A 888B              std y+16,R24
+ 041C                   .dbline 274
+ 041C           ;       str[17] = ':';
+ 041C 8AE3              ldi R24,58
+ 041E 898B              std y+17,R24
+ 0420                   .dbline 275
+ 0420           ;       str[18] = (time_buf[6] >> 4) + '0';
+ 0420 80910600          lds R24,_time_buf+6
+ 0424 8295              swap R24
+ 0426 8F70              andi R24,#0x0F
+ 0428 805D              subi R24,208    ; addi 48
+ 042A 8A8B              std y+18,R24
+ 042C                   .dbline 276
+ 042C           ;       str[19] = (time_buf[6] & 0x0f) + '0';
+ 042C 80910600          lds R24,_time_buf+6
+ 0430 8F70              andi R24,15
+ 0432 805D              subi R24,208    ; addi 48
+ 0434 8B8B              std y+19,R24
+ 0436                   .dbline 277
+ 0436           ;       str[20] = 0;
+ 0436 2224              clr R2
+ 0438 2C8A              std y+20,R2
+ 043A                   .dbline 278
+ 043A           ;       return str;
+ 043A 8E01              movw R16,R28
+ 043C                   .dbline -2
+ 043C           L80:
+ 043C                   .dbline 0 ; func end
+ 043C 6596              adiw R28,21
+ 043E 0895              ret
+ 0440                   .dbsym l str 0 A[21:21]c
+ 0440                   .dbend
+                        .area data(ram, con, rel)
+ 001D                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 001D           L65:
+ 001D                   .blkb 5
                         .area idata
- 0012 D6DCCEE500        .byte 214,220,206,229,0
+ 001D D6DCC8D500        .byte 214,220,200,213,0
                         .area data(ram, con, rel)
- 0017                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 0017           L57:
- 0017                   .blkb 5
+ 0022                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0022           L62:
+ 0022                   .blkb 5
                         .area idata
- 0017 D6DCCBC400        .byte 214,220,203,196,0
+ 0022 D6DCC1F900        .byte 214,220,193,249,0
                         .area data(ram, con, rel)
- 001C                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 001C           L54:
- 001C                   .blkb 5
+ 0027                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0027           L59:
+ 0027                   .blkb 5
                         .area idata
- 001C D6DCC8FD00        .byte 214,220,200,253,0
+ 0027 D6DCCEE500        .byte 214,220,206,229,0
                         .area data(ram, con, rel)
- 0021                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 0021           L51:
- 0021                   .blkb 5
+ 002C                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 002C           L56:
+ 002C                   .blkb 5
                         .area idata
- 0021 D6DCB6FE00        .byte 214,220,182,254,0
+ 002C D6DCCBC400        .byte 214,220,203,196,0
                         .area data(ram, con, rel)
- 0026                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 0026           L48:
- 0026                   .blkb 5
+ 0031                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0031           L53:
+ 0031                   .blkb 5
                         .area idata
- 0026 D6DCD2BB00        .byte 214,220,210,187,0
+ 0031 D6DCC8FD00        .byte 214,220,200,253,0
                         .area data(ram, con, rel)
- 002B                   .dbfile E:\git\AVR\OldManAlarm\12864time.c
- 002B           ; }
+ 0036                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0036           L50:
+ 0036                   .blkb 5
+                        .area idata
+ 0036 D6DCB6FE00        .byte 214,220,182,254,0
+                        .area data(ram, con, rel)
+ 003B                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 003B           L47:
+ 003B                   .blkb 5
+                        .area idata
+ 003B D6DCD2BB00        .byte 214,220,210,187,0
+                        .area data(ram, con, rel)
+ 0040                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\12864time.c
+ 0040           ; }
