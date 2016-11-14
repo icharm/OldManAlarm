@@ -4,7 +4,7 @@
 
 
 uint temp_value;
-uint temp,A1,A2,A3;
+uint A1,A2,A3;
 
 //************************************************************************* 
 //			DS18B20初始化
@@ -123,7 +123,7 @@ unsigned int DS18B20_Read_temp(void)
      {
  	  buf[i] = DS18B20_Read_byte();	
      }
-	i = buf[1];
+	i = buf[1];           
 	i <<= 8;
 	i |= buf[0];
 	temp_value=i;
@@ -172,4 +172,20 @@ void LCD_write_temperature(void)
 	delay_nms(2);
 	DisplayCgrom(0x97,"℃");         //在LCD上写温度单位
 
+}
+
+//读取温度，保存到字符串数组中
+unsigned char* Temperaturetostr(void)
+{
+	unsigned char str[7]="\0";	 	//温度字符串数组
+	ds1820_start();		           //启动一次转换
+	DS18B20_Read_temp();		   //读取温度数值
+    data_do(temp_value);       	   //处理数据，得到要显示的值
+	str[0] = A1 + '0';
+	str[1] = A2 + '0';
+	str[2]='.';
+	str[3] = A3 + '0';
+	strcat((char*)str, "℃");
+	str[6] = 0;
+	return str;
 }

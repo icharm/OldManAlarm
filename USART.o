@@ -3,7 +3,7 @@ H 3 areas 14 global symbols
 M USART.c
 A text size 164 flags 0
 dbfile USART.c
-dbfile E:\git\AVR\OldManAlarm\USART.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\USART.c
 dbfunc e UART0_Init 0 fV
 dbline FFFFFFFF 0
 dbline 19 0
@@ -86,7 +86,7 @@ S _UART0_Init Def0000
 S _UART1_Init Def009A
 A vector size 7C flags C
 A bss size 12A flags 20
-dbfile E:\git\AVR\OldManAlarm\USART.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\USART.c
 dbsym e RxBufRd_wifi 0 c
 dbsym e RxBufWr_wifi 1 c
 dbsym e RxCharNum_wifi 2 c

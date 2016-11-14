@@ -167,7 +167,7 @@ void main(void)
             case 100 :
                 DisplayCgrom(0x8C,"ÎÂ¶È");
                 delay_nms(2);
-				strcpy((char*)tempstr,(char*)Temperaturetostr());
+				strcpy((char*)tempstr,(char*)tempratostr());
 				voicePlayer(tempstr);
                 break;
 			case 101:

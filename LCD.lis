@@ -1,7 +1,7 @@
                         .module LCD.c
                         .area text(rom, con, rel)
  0000                   .dbfile LCD.c
- 0000                   .dbfile E:\git\AVR\OldManAlarm\LCD.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\LCD.c
  0000                   .dbfunc e system_init _system_init fV
                         .even
  0000           _system_init::

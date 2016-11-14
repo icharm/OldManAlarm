@@ -9,7 +9,7 @@ S _TxCharBuf_wifi Ref0000
 S _strlen Ref0000
 A text size E4 flags 0
 dbfile ESP8266.c
-dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
 dbfunc e wifi_Restart 0 fV
 dbline FFFFFFFF 0
 dbline 13 0
@@ -87,7 +87,7 @@ S _wifi_CIPMODE Def0070
 S _wifi_CIPSEND Def008C
 S _wifi_SENDMSG Def00C4
 A data size 79 flags 20
-dbfile E:\git\AVR\OldManAlarm\ESP8266.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\ESP8266.c
 A idata size 79 flags 0
 T 00 00 20 E0 30 E0
 R 00 00 00 00 20 02 01 00 72 00 40 04 01 00 72 00

@@ -1,7 +1,7 @@
                         .module basic.c
                         .area text(rom, con, rel)
  0000                   .dbfile basic.c
- 0000                   .dbfile E:\git\AVR\OldManAlarm\basic.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\basic.c
  0000                   .dbfunc e delay_1us _delay_1us fV
                         .even
  0000           _delay_1us::

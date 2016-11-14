@@ -16,3 +16,4 @@ void ds1820_start(void);
 unsigned int DS18B20_Read_temp(void);
 void data_do(uint temp_d);
 void LCD_write_temperature(void);
+unsigned char* Temperaturetostr(void);

@@ -4,26 +4,26 @@
                         .area data(ram, con, rel)
  0000                   .dbfile SYN7318.c
  0000           _words::
- 0000                   .blkb 69
+ 0000                   .blkb 78
                         .area idata
  0000 BEC8C3FC20317CBEC8C3FCB0A120317C  .byte 190,200,195,252,32,49,124,190,200,195,252,176,161,32,49,124
  0010 B0A5DFCF20327CCFD6D4DAB6E0C9D9B6  .byte 176,165,223,207,32,50,124,207,214,212,218,182,224,201,217,182
  0020 C8203130307CCFD6D4DACEC2B6C8B6E0  .byte 200,32,49,48,48,124,207,214,212,218,206,194,182,200,182,224
  0030 C9D9203130307CCFD6D4DABCB8B5E320  .byte 201,217,32,49,48,48,124,207,214,212,218,188,184,181,227,32
- 0040 3130317C00        .byte 49,48,49,124,0
+ 0040 3130317CCAB1BCE4203130317C00      .byte 49,48,49,124,202,177,188,228,32,49,48,49,124,0
                         .area data(ram, con, rel)
- 0045                   .dbfile SYN7318.c
- 0045                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0045                   .dbsym e words _words A[69:69]c
- 0045           _wordID::
- 0045                   .blkb 2
+ 004E                   .dbfile SYN7318.c
+ 004E                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 004E                   .dbsym e words _words A[78:78]c
+ 004E           _wordID::
+ 004E                   .blkb 2
                         .area idata
- 0045 0000              .word 0
+ 004E 0000              .word 0
                         .area data(ram, con, rel)
- 0047                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0047                   .dbsym e wordID _wordID i
+ 0050                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 0050                   .dbsym e wordID _wordID i
                         .area text(rom, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
  0000                   .dbfunc e SYN7318_init _SYN7318_init fV
                         .even
  0000           _SYN7318_init::
@@ -39,7 +39,7 @@
  0000           ; 
  0000           ; 
  0000           ; //带命令识别词条
- 0000           ; const uchar words[] = "救命 1|救命啊 1|哎呦 2|现在多少度 100|现在温度多少 100|现在几点 101|";
+ 0000           ; const uchar words[] = "救命 1|救命啊 1|哎呦 2|现在多少度 100|现在温度多少 100|现在几点 101|时间 101|";
  0000           ; uchar tmp_text[255];
  0000           ; 
  0000           ; uint wordID = 0x0000;
@@ -160,8 +160,8 @@
  004E           ;     wordID = 0x0000;
  004E 2224              clr R2
  0050 3324              clr R3
- 0052 30924600          sts _wordID+1,R3
- 0056 20924500          sts _wordID,R2
+ 0052 30924F00          sts _wordID+1,R3
+ 0056 20924E00          sts _wordID,R2
  005A                   .dbline 58
  005A           ;     do {
  005A 04C0              xjmp L12
@@ -326,22 +326,22 @@
  0100                   .dbline 90
  0100           ;             case 4 :
  0100           ;                 wordID <<= 8;
- 0100 20904500          lds R2,_wordID
- 0104 30904600          lds R3,_wordID+1
+ 0100 20904E00          lds R2,_wordID
+ 0104 30904F00          lds R3,_wordID+1
  0108 322C              mov R3,R2
  010A 2224              clr R2
- 010C 30924600          sts _wordID+1,R3
- 0110 20924500          sts _wordID,R2
+ 010C 30924F00          sts _wordID+1,R3
+ 0110 20924E00          sts _wordID,R2
  0114                   .dbline 91
  0114           ;                 wordID |= RxSt;
  0114 262E              mov R2,R22
  0116 3324              clr R3
- 0118 40904500          lds R4,_wordID
- 011C 50904600          lds R5,_wordID+1
+ 0118 40904E00          lds R4,_wordID
+ 011C 50904F00          lds R5,_wordID+1
  0120 4228              or R4,R2
  0122 5328              or R5,R3
- 0124 50924600          sts _wordID+1,R5
- 0128 40924500          sts _wordID,R4
+ 0124 50924F00          sts _wordID+1,R5
+ 0128 40924E00          sts _wordID,R4
  012C                   .dbline 93
  012C           ;                 //wordID |= command;
  012C           ;                 length--;
@@ -1054,48 +1054,48 @@
  03C8 0895              ret
  03CA                   .dbend
                         .area bss(ram, con, rel)
- 0000                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
+ 0000                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
  0000           _tmp_text::
  0000                   .blkb 255
  00FF                   .dbsym e tmp_text _tmp_text A[255:255]c
                         .area data(ram, con, rel)
- 0047                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0047           L87:
- 0047                   .blkb 13
+ 0050                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 0050           L87:
+ 0050                   .blkb 13
                         .area idata
- 0047 B4CACCF5B8FCD0C2CAA7B0DC00        .byte 180,202,204,245,184,252,208,194,202,167,176,220,0
+ 0050 B4CACCF5B8FCD0C2CAA7B0DC00        .byte 180,202,204,245,184,252,208,194,202,167,176,220,0
                         .area data(ram, con, rel)
- 0054                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0054           L86:
- 0054                   .blkb 13
+ 005D                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 005D           L86:
+ 005D                   .blkb 13
                         .area idata
- 0054 B4CACCF5B8FCD0C2B3C9B9A600        .byte 180,202,204,245,184,252,208,194,179,201,185,166,0
+ 005D B4CACCF5B8FCD0C2B3C9B9A600        .byte 180,202,204,245,184,252,208,194,179,201,185,166,0
                         .area data(ram, con, rel)
- 0061                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0061           L81:
- 0061                   .blkb 17
+ 006A                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 006A           L81:
+ 006A                   .blkb 17
                         .area idata
- 0061 D5FDD4DAB8FCD0C2B4CACCF5A1A3A1A3  .byte 213,253,212,218,184,252,208,194,180,202,204,245,161,163,161,163
- 0071 00                .byte 0
+ 006A D5FDD4DAB8FCD0C2B4CACCF5A1A3A1A3  .byte 213,253,212,218,184,252,208,194,180,202,204,245,161,163,161,163
+ 007A 00                .byte 0
                         .area data(ram, con, rel)
- 0072                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 0072           L52:
- 0072                   .blkb 70
+ 007B                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 007B           L52:
+ 007B                   .blkb 70
                         .area idata
- 0072 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
- 0082 5B62305DB2BBBAC3D2E2CBBCA3ACCFB5  .byte 91,'b,48,93,178,187,186,195,210,226,203,188,163,172,207,181
- 0092 CDB3CEB4C0EDBDE2C4FAB5C4D2E2CBBC  .byte 205,179,206,180,192,237,189,226,196,250,181,196,210,226,203,188
- 00A2 A3ACC7EBD6D8D0C2CBB5D2BBB1E95B6D  .byte 163,172,199,235,214,216,208,194,203,181,210,187,177,233,91,'m
- 00B2 335D5B645D00      .byte 51,93,91,'d,93,0
+ 007B 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
+ 008B 5B62305DB2BBBAC3D2E2CBBCA3ACCFB5  .byte 91,'b,48,93,178,187,186,195,210,226,203,188,163,172,207,181
+ 009B CDB3CEB4C0EDBDE2C4FAB5C4D2E2CBBC  .byte 205,179,206,180,192,237,189,226,196,250,181,196,210,226,203,188
+ 00AB A3ACC7EBD6D8D0C2CBB5D2BBB1E95B6D  .byte 163,172,199,235,214,216,208,194,203,181,210,187,177,233,91,'m
+ 00BB 335D5B645D00      .byte 51,93,91,'d,93,0
                         .area data(ram, con, rel)
- 00B8                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 00B8           L50:
- 00B8                   .blkb 56
+ 00C1                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 00C1           L50:
+ 00C1                   .blkb 56
                         .area idata
- 00B8 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
- 00C8 5B62305DBBB6D3ADCAB9D3C3B6C0BED3  .byte 91,'b,48,93,187,182,211,173,202,185,211,195,182,192,190,211
- 00D8 C0CFC8CBD3A6BCB1BAF4BEC8CFB5CDB3  .byte 192,207,200,203,211,166,188,177,186,244,190,200,207,181,205,179
- 00E8 5B6D335D5B645D00  .byte 91,'m,51,93,91,'d,93,0
+ 00C1 5B6D335D5B73355D5B76335D5B66315D  .byte 91,'m,51,93,91,'s,53,93,91,'v,51,93,91,'f,49,93
+ 00D1 5B62305DBBB6D3ADCAB9D3C3B6C0BED3  .byte 91,'b,48,93,187,182,211,173,202,185,211,195,182,192,190,211
+ 00E1 C0CFC8CBD3A6BCB1BAF4BEC8CFB5CDB3  .byte 192,207,200,203,211,166,188,177,186,244,190,200,207,181,205,179
+ 00F1 5B6D335D5B645D00  .byte 91,'m,51,93,91,'d,93,0
                         .area data(ram, con, rel)
- 00F0                   .dbfile E:\git\AVR\OldManAlarm\SYN7318.c
- 00F0           ; }
+ 00F9                   .dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\SYN7318.c
+ 00F9           ; }

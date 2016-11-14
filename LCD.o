@@ -8,7 +8,7 @@ S pop_xgset300C Ref0000
 S pop_xgset303C Ref0000
 A text size 14C flags 0
 dbfile LCD.c
-dbfile E:\git\AVR\OldManAlarm\LCD.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\LCD.c
 dbfunc e system_init 0 fV
 dbline FFFFFFFF 0
 dbline 8 0

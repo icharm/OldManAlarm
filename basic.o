@@ -3,7 +3,7 @@ H 1 areas 8 global symbols
 M basic.c
 A text size 94 flags 0
 dbfile basic.c
-dbfile E:\git\AVR\OldManAlarm\basic.c
+dbfile G:\基于ASR技术的独居老人应急呼救系统\OldManAlarm\basic.c
 dbfunc e delay_1us 0 fV
 dbline FFFFFFFF 0
 dbline 3 0
